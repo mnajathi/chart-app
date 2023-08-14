@@ -27,12 +27,14 @@ const DateRangeFilter: React.FC<DateRangeFilterProps> = ({ }) => {
                 placeholder="From"
                 value={fromValue}
                 onChange={handleFromChange}
+                className='rounded-lg text-sm'
             />
             <InputField
                 type="date"
                 placeholder="To"
                 value={toValue}
                 onChange={handleToChange}
+                className='rounded-lg text-sm'
             />
         </div>
     );
