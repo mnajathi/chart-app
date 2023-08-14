@@ -12,13 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const axios_1 = __importDefault(require("axios"));
-const getPosts = (res) => __awaiter(void 0, void 0, void 0, function* () {
-    let result = yield axios_1.default.get(`https://jsonplaceholder.typicode.com/posts`);
-    let posts = result.data;
-    return res.status(200).json({
-        message: posts
-    });
+const path_1 = __importDefault(require("path"));
+const fs_1 = __importDefault(require("fs"));
+const getMe = (_, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const meFilePath = path_1.default.join(__dirname, '../assets/datasource/me.json');
+    const meData = JSON.parse(fs_1.default.readFileSync(meFilePath, 'utf-8'));
+    res.json(meData);
 });
-exports.default = { getPosts };
+exports.default = { getMe };
 //# sourceMappingURL=me.js.map

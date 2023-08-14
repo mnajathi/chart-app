@@ -5,6 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 const express_1 = __importDefault(require("express"));
 const me_1 = __importDefault(require("../controllers/me"));
 const router = express_1.default.Router();
-router.get('/', me_1.default.getPosts);
+router.get('/', me_1.default.getMe);
 module.exports = router;
 //# sourceMappingURL=me.js.map

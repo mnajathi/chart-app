@@ -12,13 +12,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const axios_1 = __importDefault(require("axios"));
-const getPosts = (res) => __awaiter(void 0, void 0, void 0, function* () {
-    let result = yield axios_1.default.get(`https://jsonplaceholder.typicode.com/posts`);
-    let posts = result.data;
-    return res.status(200).json({
-        message: posts
-    });
+const employees_json_1 = __importDefault(require("../assets/datasource/employees.json"));
+const getEmployees = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { from, to } = req.query;
+    let employeesArray = Object.values(employees_json_1.default);
+    if (from && to) {
+        const fromDate = new Date(from);
+        const toDate = new Date(to);
+        if (!isNaN(fromDate.getTime()) && !isNaN(toDate.getTime())) {
+        }
+    }
+    res.json(employeesArray);
 });
-exports.default = { getPosts };
+exports.default = { getEmployees };
 //# sourceMappingURL=employees.js.map

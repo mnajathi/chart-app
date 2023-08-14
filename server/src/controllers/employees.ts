@@ -1,20 +1,25 @@
-import { Response } from 'express';
-import axios, { AxiosResponse } from 'axios';
+import { Request, Response } from 'express';
 
-interface Post {
-    userId: Number;
-    id: Number;
-    title: String;
-    body: String;
-}
+import Employee from 'src/interfaces/Employees';
+import employeesData from '../assets/datasource/employees.json';
 
-const getPosts = async (res: Response) => {
-    // get some posts
-    let result: AxiosResponse = await axios.get(`https://jsonplaceholder.typicode.com/posts`);
-    let posts: [Post] = result.data;
-    return res.status(200).json({
-        message: posts
-    });
+const getEmployees = async (req: Request, res: Response) => {
+    const { from, to } = req.query;
+
+    let employeesArray: Employee[] = Object.values(employeesData);
+
+    if (from && to) {
+        const fromDate = new Date(from as string);
+        const toDate = new Date(to as string);
+        if (!isNaN(fromDate.getTime()) && !isNaN(toDate.getTime())) {
+            // employeesArray = employeesArray.filter((employee: Employee) => {
+            //     const employeeDate = new Date(employee?.join_date); // Replace 'join_date' with the actual property
+            //     return employeeDate >= fromDate && employeeDate <= toDate;
+            // });
+        }
+    }
+
+    res.json(employeesArray);
 };
 
-export default { getPosts };
+export default { getEmployees };

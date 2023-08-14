@@ -1,20 +1,13 @@
-import { Response } from 'express';
-import axios, { AxiosResponse } from 'axios';
+import path from 'path';
+import fs from 'fs';
+import { Request, Response } from 'express';
 
-interface Post {
-    userId: Number;
-    id: Number;
-    title: String;
-    body: String;
-}
+import Employee from 'src/interfaces/Employees';
 
-const getPosts = async (res: Response) => {
-    // get some posts
-    let result: AxiosResponse = await axios.get(`https://jsonplaceholder.typicode.com/posts`);
-    let posts: [Post] = result.data;
-    return res.status(200).json({
-        message: posts
-    });
+const getMe = async (_: Request, res: Response) => {
+    const meFilePath = path.join(__dirname, '../assets/datasource/me.json');
+    const meData: Employee = JSON.parse(fs.readFileSync(meFilePath, 'utf-8'));
+    res.json(meData);
 };
 
-export default { getPosts };
+export default { getMe };

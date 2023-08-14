@@ -1,5 +1,5 @@
 import "dotenv-safe/config";
-import express, { Express } from 'express'
+import express, { Express, Response } from 'express'
 
 import cors from 'cors'
 import dotenv from 'dotenv-safe';
@@ -20,6 +20,9 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/employees', employeeRoutes);
 app.use('/api/me', meRoutes);
+app.get('/', (_, res: Response) => {
+	res.send('Prodoscore API By Najathi');
+});
 
 app.listen(__port__, () => {
     console.log(`🚀 Server ready and listening at ==> http://localhost:${__port__}`);

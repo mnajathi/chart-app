@@ -17,6 +17,9 @@ app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use('/api/employees', employees_1.default);
 app.use('/api/me', me_1.default);
+app.get('/', (_, res) => {
+    res.send('Prodoscore API By Najathi');
+});
 app.listen(constants_1.__port__, () => {
     console.log(`🚀 Server ready and listening at ==> http://localhost:${constants_1.__port__}`);
 });
