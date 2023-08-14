@@ -24,13 +24,10 @@ const DropDown: React.FC<DropDownProps> = ({ }) => {
         queryFn: () => list()
     });
 
-    if (isLoading) {
-        <>Loging</>
-    }
-
-    if (isError) {
-        <>error</>
-    }
+    const getInitials = (name: any) => {
+        const names = name.split(' ');
+        return names.map((n: string) => n[0]).join('');
+    };
 
     return (
         <div className="relative">
@@ -40,11 +37,18 @@ const DropDown: React.FC<DropDownProps> = ({ }) => {
             >
                 Profile
             </button>
-            {isProfileOpen && isFetched && (
+            {isLoading ? (
+                <p>Loading...</p>
+            ) : isError && error ? (
+                <p>Error occurred while fetching data.</p>
+            ) : isProfileOpen && isFetched && (
                 <div className="absolute right-0 mt-1 bg-white rounded shadow w-52">
-                    <div className="px-4 py-3">
-                        <div className="text-gray-600">{meData?.fullname}</div>
-                        <div className="text-gray-400 text-xs">{meData?.email}</div>
+                    <div className="text-center px-4 py-3">
+                        <div className="flex items-center justify-center mx-auto w-20 h-20 rounded-full bg-blue-500 text-white text-2xl mb-4">
+                            {getInitials(meData?.fullname)}
+                        </div>
+                        <h1 className="text-lg font-semibold mb-1">{meData?.fullname}</h1>
+                        <p className="text-gray-500 text-sm">{meData?.email}</p>
                     </div>
                     <div className="border-t border-gray-100">
                         <Link

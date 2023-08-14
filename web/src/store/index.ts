@@ -1,10 +1,11 @@
 import { create } from 'zustand'
+import moment from 'moment';
 
 import { DateState } from './types';
 
 export const useDateStore = create<DateState>((set) => ({
-    fromValue: new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-    toValue: new Date().toISOString().split('T')[0],
+    fromValue: moment().subtract(7, 'days').format('YYYY-MM-DD'),
+  toValue: moment().format('YYYY-MM-DD'),
 
     setFromValue: (from) => set({ fromValue: from }),
     setToValue: (to) => set({ toValue: to }),
