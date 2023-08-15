@@ -20,4 +20,10 @@ export type Employee = {
 	join_date?: any;
 };
 
-export default Employee;
+export type FiEmployee = {
+	id: number;
+	fullname: string;
+	score: number;
+};
+
+export type CategorizedScore = Record<any, Employee[]>;

@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 import {useQuery} from '@tanstack/react-query';
 import {list} from '@/apis/me';
-import type Employee from '@/shared/types/employee';
+import {type Employee} from '@/shared/types/employee';
 
 type DropDownProps = Record<string, any>;
 

@@ -13,7 +13,7 @@ const Container: React.FC<ContainerProps> = ({children, className}) => {
 
 	return (
 		<main className={classes}>
-			<div className="max-w-5xl w-full">{children}</div>
+			<div className="max-w-6xl w-full">{children}</div>
 		</main>
 	);
 };

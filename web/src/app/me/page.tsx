@@ -4,8 +4,9 @@ import {useQuery} from '@tanstack/react-query';
 
 import Container from '@/components/container';
 import Box from '@/components/container/Box';
-import type Employee from '@/shared/types/employee';
+import {type Employee} from '@/shared/types/employee';
 import {list} from '@/apis/me';
+import DoughnutChart from '@/components/charts/DoughnutChart';
 
 export default function Me() {
 	const {
@@ -42,10 +43,11 @@ export default function Me() {
 								<h1 className="text-xl font-semibold mb-2">{meData?.fullname}</h1>
 								<p className="text-gray-500">{meData?.email}</p>
 							</div>
-							<div className="mt-4">
+							<div className="my-4">
 								<p className="text-gray-600">Department: {meData?.department_id}</p>
 								<p className="text-gray-600">Role: {meData?.role}</p>
 							</div>
+							<DoughnutChart score={meData.scr.l} />
 						</div>
 					</Box>
 				)

@@ -1,5 +1,5 @@
-import type Employee from '@/shared/types/employee';
 import axios from '../apis';
+import {type Employee} from '@/shared/types/employee';
 
 export async function list(): Promise<Employee> {
 	try {
