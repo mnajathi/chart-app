@@ -18,7 +18,6 @@ const Header: React.FC<HeaderProps> = () => (
 						height={30}
 					/>
 				</Link>
-
 				<DateRangeFilter />
 			</div>
 			<DropDown />
