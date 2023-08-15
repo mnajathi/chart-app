@@ -18,7 +18,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/api/employees', employeeRoutes);
+app.use('/api/employee', employeeRoutes);
 app.use('/api/me', meRoutes);
 app.get('/', (_, res: Response) => {
 	res.send('Prodoscore API By Najathi');

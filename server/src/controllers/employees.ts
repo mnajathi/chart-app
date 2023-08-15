@@ -22,4 +22,32 @@ const getEmployees = async (req: Request, res: Response) => {
     res.json(employeesArray);
 };
 
-export default { getEmployees };
+const findById = async (req: Request, res: Response) => {
+    const { id } = req.params;
+    if (id === null || id === undefined || isNaN(+id)) {
+        res.status(404).json({ message: 'Id params is not valid' });
+    }
+
+    const employee: Employee | undefined = Object.values(employeesData).find((emp) => emp.id === +id);
+    if (!employee) {
+        res.status(404).json({ message: 'Employee not found' });
+    }
+    res.json(employee);
+};
+
+const categorizedScores = async (_: Request, res: Response) => {
+    const employees: Employee[] = Object.values(employeesData);
+    const highScoreEmployees = employees.filter((emp: Employee) => emp.scr.l >= 75);
+    const mediumScoreEmployees = employees.filter((emp: Employee) => emp.scr.l >= 40 && emp.scr.l < 75);
+    const lowScoreEmployees = employees.filter((emp: Employee) => emp.scr.l < 40);
+
+    const categorizedEmployees = {
+        highScore: highScoreEmployees,
+        mediumScore: mediumScoreEmployees,
+        lowScore: lowScoreEmployees,
+    };
+
+    res.json(categorizedEmployees);
+};
+
+export default { getEmployees, findById, categorizedScores };
