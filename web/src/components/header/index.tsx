@@ -6,7 +6,7 @@ import DropDown from './DropDown';
 
 type HeaderProps = Record<string, any>;
 
-const Header: React.FC<HeaderProps> = () => (
+const Header: React.FC<HeaderProps> = ({}) => (
 	<header className="bg-gray-100 py-3 shadow-md">
 		<div className="container mx-auto flex justify-between items-center">
 			<div className="flex items-center space-x-6">
