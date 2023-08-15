@@ -1,0 +1,13 @@
+{
+    "endOfLine": "lf",
+    "printWidth": 80,
+    "tabWidth": 1,
+    "useTabs": true,
+    "trailingComma": "all",
+    "singleQuote": true,
+    "semi": true,
+    "objectCurlySpacing": [
+        "never"
+    ],
+    "bracketSpacing": false
+}

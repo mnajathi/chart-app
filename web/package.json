@@ -15,7 +15,6 @@
     "@types/react-dom": "18.2.7",
     "autoprefixer": "10.4.15",
     "axios": "^1.4.0",
-    "eslint": "8.47.0",
     "eslint-config-next": "13.4.13",
     "moment": "^2.29.4",
     "next": "13.4.13",
@@ -24,10 +23,19 @@
     "react-dom": "18.2.0",
     "tailwind-merge": "^1.14.0",
     "tailwindcss": "3.3.3",
-    "typescript": "5.1.6",
     "zustand": "^4.4.1"
   },
   "devDependencies": {
-    "@tanstack/react-query-devtools": "^4.32.6"
+    "@next/eslint-plugin-next": "^13.4.16",
+    "@tanstack/react-query-devtools": "^4.32.6",
+    "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "@typescript-eslint/parser": "^6.4.0",
+    "eslint": "^8.47.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-config-xo": "^0.43.1",
+    "eslint-config-xo-typescript": "^1.0.1",
+    "eslint-plugin-react": "^7.33.1",
+    "prettier": "3.0.1",
+    "typescript": "^5.1.6"
   }
 }
