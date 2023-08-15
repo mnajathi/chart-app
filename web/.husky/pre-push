@@ -4,6 +4,8 @@
 # If everything passes... Now we can commit
 echo '🤔🤔🤔🤔... Alright... Code looks good to me... Trying to build now. 🤔🤔🤔🤔'
 
+cd web/
+
 npm run build ||
 (
     echo '❌👷🔨❌ Better call Bob... Because your build failed ❌👷🔨❌

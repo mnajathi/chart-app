@@ -1,7 +1,7 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-echo '🏗️👷 Styling, testing, and building your project before committing'
+echo '🏗️👷 Styling, testing, and your project before committing'
 cd web/
 
 echo "Running Prettier..."
