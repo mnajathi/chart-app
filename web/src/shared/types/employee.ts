@@ -18,6 +18,12 @@ export type Employee = {
 	strata: number;
 	timezone: string;
 	join_date?: any;
+	manager_details: {
+		fullname: string;
+		email: string;
+		id: number;
+		status: number;
+	};
 };
 
 export type FiEmployee = {

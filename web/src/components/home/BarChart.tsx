@@ -1,10 +1,12 @@
+'use client';
+
 import {useQuery} from '@tanstack/react-query';
 
-import useDateStore from '@/store';
-import VerticalBarChart from '../charts/barChart/Vertical';
 import {list} from '@/apis/employee';
 import {type Employee} from '@/shared/types/employee';
+import useDateStore from '@/store';
 import Card from '../card';
+import VerticalBarChart from '../charts/barChart/Vertical';
 
 type BarChartProps = Record<string, any>;
 

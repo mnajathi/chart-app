@@ -8,12 +8,12 @@ type ContainerProps = {
 
 const Container: React.FC<ContainerProps> = ({children, className}) => {
 	const classes = twMerge(
-		`min-h-screen py-6 px-4 flex justify-center ${className ?? ''}`,
+		`container mx-auto py-6 px-4 w-full ${className ?? ''}`,
 	);
 
 	return (
 		<main className={classes}>
-			<div className="max-w-6xl w-full">{children}</div>
+			{children}
 		</main>
 	);
 };

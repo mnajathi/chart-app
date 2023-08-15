@@ -119,5 +119,32 @@
         "status": 1,
         "strata": 0,
         "timezone": "UTC"
+    },
+    "266073": {
+        "activate_workshift": -1,
+        "department_id": 1,
+        "domain_id": 539,
+        "email": "najathi@prodmite.com",
+        "emp_holidays": {},
+        "fullname": "Mohamed Najathi",
+        "id": 266073,
+        "is_app_user": 0,
+        "manager": 209691,
+        "manager_details": {
+            "email": "test@prodmite.com",
+            "fullname": "Dason Test",
+            "id": 209691,
+            "role": 15000,
+            "status": 1
+        },
+        "own_details_visibility": 1,
+        "picture": "",
+        "role": 15000,
+        "scr": {
+            "l": 86.916
+        },
+        "status": 1,
+        "strata": 0,
+        "timezone": "UTC"
     }
 }

@@ -1,11 +1,13 @@
+'use client';
+
 import {
-	Chart as ChartJS,
-	CategoryScale,
-	LinearScale,
 	BarElement,
+	CategoryScale,
+	Chart as ChartJS,
+	Legend,
+	LinearScale,
 	Title,
 	Tooltip,
-	Legend,
 } from 'chart.js';
 import {Bar} from 'react-chartjs-2';
 
@@ -19,8 +21,8 @@ ChartJS.register(
 );
 
 type VerticalBarChartProps = {
-	xAxis: any[]; // Prodoscore
-	yAxis: any[]; // Employee
+	xAxis: any[];
+	yAxis: any[];
 };
 
 const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {

@@ -1,5 +1,6 @@
 'use client';
 
+import {Fragment} from 'react';
 import {useQuery} from '@tanstack/react-query';
 
 import {categorizedScores} from '@/apis/employee';
@@ -32,18 +33,19 @@ const CategorizedScoreTables: React.FC<CategorizedScoreTablesProps> = () => {
 				CategorizedScoreData && (
 					<Grid>
 						{Object.keys(CategorizedScoreData).map((key: string, idx: number) => (
-							<>
+							<Fragment key={idx}>
 								{CategorizedScoreData[key] && CategorizedScoreData[key].length > 0 && (
 									<Table
 										key={idx}
 										title={key}
 										data={CategorizedScoreData[key].map((emp: Employee) => ({
+											id: emp.id,
 											fullname: emp.fullname,
 											score: emp.scr.l,
 										}))}
 									/>
 								)}
-							</>
+							</Fragment>
 						))}
 					</Grid>
 				)
