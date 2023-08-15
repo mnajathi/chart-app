@@ -21,7 +21,7 @@ export type Employee = {
 };
 
 export type FiEmployee = {
-	id: number;
+	id?: number;
 	fullname: string;
 	score: number;
 };

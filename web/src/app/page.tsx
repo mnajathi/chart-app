@@ -1,17 +1,15 @@
 'use client';
 
-import BarChart from '@/components/Home/BarChart';
-import CategorizedScoreTables from '@/components/Home/CategorizedScoreTables';
+import BarChart from '@/components/home/BarChart';
+import CategorizedScoreTables from '@/components/home/categorizedScoreTables';
 import Container from '@/components/container';
 import Box from '@/components/container/Box';
 
 export default function Home() {
 	return (
 		<Container>
-			<Box className="flex-col">
-				<BarChart />
-				<CategorizedScoreTables />
-			</Box>
+			<BarChart />
+			<CategorizedScoreTables />
 		</Container>
 	);
 }

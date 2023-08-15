@@ -1,8 +1,11 @@
+'use client';
+
 import {useQuery} from '@tanstack/react-query';
 
 import {categorizedScores} from '@/apis/employee';
 import {type Employee, type CategorizedScore} from '@/shared/types/employee';
-import Table from '@/components/Table';
+import Table from '@/components/table';
+import Grid from '@/components/container/Grid';
 
 type CategorizedScoreTablesProps = Record<string, any>;
 
@@ -27,19 +30,22 @@ const CategorizedScoreTables: React.FC<CategorizedScoreTablesProps> = () => {
 			) : (
 				isFetched &&
 				CategorizedScoreData && (
-					<>
+					<Grid>
 						{Object.keys(CategorizedScoreData).map((key: string, idx: number) => (
-							<Table
-								key={idx}
-								title={key}
-								data={CategorizedScoreData[key].map((emp: Employee) => ({
-									id: emp.id,
-									fullname: emp.fullname,
-									score: emp.scr.l,
-								}))}
-							/>
+							<>
+								{CategorizedScoreData[key] && CategorizedScoreData[key].length > 0 && (
+									<Table
+										key={idx}
+										title={key}
+										data={CategorizedScoreData[key].map((emp: Employee) => ({
+											fullname: emp.fullname,
+											score: emp.scr.l,
+										}))}
+									/>
+								)}
+							</>
 						))}
-					</>
+					</Grid>
 				)
 			)}
 		</>

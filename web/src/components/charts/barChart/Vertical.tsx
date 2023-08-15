@@ -19,25 +19,16 @@ ChartJS.register(
 );
 
 type VerticalBarChartProps = {
-	title: string;
 	xAxis: any[]; // Prodoscore
 	yAxis: any[]; // Employee
 };
 
-const VerticalBarChart: React.FC<VerticalBarChartProps> = ({
-	title,
-	xAxis,
-	yAxis,
-}) => {
+const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 	const options = {
 		responsive: true,
 		plugins: {
 			legend: {
 				position: 'bottom' as const,
-			},
-			title: {
-				display: true,
-				text: title,
 			},
 		},
 	};
