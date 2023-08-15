@@ -63,7 +63,7 @@ const Page: React.FC<PageProps> = ({params}) => {
 
 									{empData?.manager_details && (
 										<>
-											<p className='text-gray-900 mt-2 font-semibold'>Manager Details:</p>
+											<p className="text-gray-900 mt-2 font-semibold">Manager Details:</p>
 											<p className="text-gray-600">
 												- Role: {empData?.manager_details?.fullname}
 											</p>

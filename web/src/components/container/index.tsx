@@ -11,11 +11,7 @@ const Container: React.FC<ContainerProps> = ({children, className}) => {
 		`container mx-auto py-6 px-4 w-full ${className ?? ''}`,
 	);
 
-	return (
-		<main className={classes}>
-			{children}
-		</main>
-	);
+	return <main className={classes}>{children}</main>;
 };
 
 export default Container;
