@@ -1,19 +1,19 @@
 'use client';
 
-import useDateStore from '@/store';
 import InputField from '../fields/InputField';
+import useAppStore from '@/store';
 
 type DateRangeFilterProps = Record<string, any>;
 
 const DateRangeFilter: React.FC<DateRangeFilterProps> = () => {
-	const {fromValue, toValue} = useDateStore();
+	const {fromValue, toValue} = useAppStore();
 
 	const handleFromChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		useDateStore.setState({fromValue: event.target.value});
+		useAppStore.setState({fromValue: event.target.value});
 	};
 
 	const handleToChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		useDateStore.setState({toValue: event.target.value});
+		useAppStore.setState({toValue: event.target.value});
 	};
 
 	return (

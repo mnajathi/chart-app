@@ -4,14 +4,14 @@ import {useQuery} from '@tanstack/react-query';
 
 import {list} from '@/apis/employee';
 import {type Employee} from '@/shared/types/employee';
-import useDateStore from '@/store';
 import Card from '../card';
 import VerticalBarChart from '../charts/barChart/Vertical';
+import useAppStore from '@/store';
 
 type BarChartProps = Record<string, any>;
 
 const BarChart: React.FC<BarChartProps> = () => {
-	const {fromValue, toValue} = useDateStore();
+	const {fromValue, toValue} = useAppStore();
 
 	const {
 		data: employeesData,
@@ -33,7 +33,7 @@ const BarChart: React.FC<BarChartProps> = () => {
 			) : (
 				isFetched &&
 				employeesData && (
-					<Card className="w-full mb-4" title="Managers Prodoscore">
+					<Card className="w-full max-w-5xl mx-auto mb-4" title="Managers Prodoscore">
 						<VerticalBarChart
 							xAxis={employeesData.map((e: Employee) => e.scr.l)}
 							yAxis={employeesData.map((e: Employee) => e.fullname)}

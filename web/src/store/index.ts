@@ -1,18 +1,8 @@
 import {create} from 'zustand';
-import moment from 'moment';
+import {type DateSlice, createDateSlice} from './slice/date';
 
-import {type DateState} from './types';
-
-export const useDateStore = create<DateState>((set) => ({
-	fromValue: moment().subtract(7, 'days').format('YYYY-MM-DD'),
-	toValue: moment().format('YYYY-MM-DD'),
-
-	setFromValue(from) {
-		set({fromValue: from});
-	},
-	setToValue(to) {
-		set({toValue: to});
-	},
+const useAppStore = create<DateSlice>()((...a) => ({
+	...createDateSlice(...a),
 }));
 
-export default useDateStore;
+export default useAppStore;
