@@ -19,23 +19,6 @@ export default function Me() {
 		queryFn: async () => list(),
 	});
 
-	const getInitials = (name: string) => {
-		const names = name.split(' ');
-		return names.map((n: string) => n[0]).join('');
-	};
-
-	const getColorClass = (score: number) => {
-		if (score > 75) {
-			return 'text-blue-500';
-		}
-
-		if (score >= 40) {
-			return 'text-black';
-		}
-
-		return 'text-red-500';
-	};
-
 	return (
 		<Container>
 			{isLoading ? (
