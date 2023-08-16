@@ -33,7 +33,10 @@ const BarChart: React.FC<BarChartProps> = () => {
 			) : (
 				isFetched &&
 				employeesData && (
-					<Card className="w-full max-w-5xl mx-auto mb-4" title="Managers Prodoscore">
+					<Card
+						className="w-full max-w-5xl mx-auto mb-4"
+						title="Managers Prodoscore"
+					>
 						<VerticalBarChart
 							xAxis={employeesData.map((e: Employee) => e.scr.l)}
 							yAxis={employeesData.map((e: Employee) => e.fullname)}
