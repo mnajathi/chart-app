@@ -37,14 +37,14 @@ const findById = async (req: Request, res: Response) => {
 
 const categorizedScores = async (_: Request, res: Response) => {
     const employees: Employee[] = Object.values(employeesData);
-    const highScoreEmployees = employees.filter((emp: Employee) => emp.scr.l >= 75);
-    const mediumScoreEmployees = employees.filter((emp: Employee) => emp.scr.l >= 40 && emp.scr.l < 75);
-    const lowScoreEmployees = employees.filter((emp: Employee) => emp.scr.l < 40);
+    const aboveAverageEmployees = employees.filter((emp: Employee) => emp.scr.l >= 75);
+    const averageEmployees = employees.filter((emp: Employee) => emp.scr.l >= 40 && emp.scr.l < 75);
+    const belowAverageEmployees = employees.filter((emp: Employee) => emp.scr.l < 40);
 
     const categorizedEmployees = {
-        highScore: highScoreEmployees,
-        mediumScore: mediumScoreEmployees,
-        lowScore: lowScoreEmployees,
+        aboveAverage: aboveAverageEmployees,
+        average: averageEmployees,
+        belowAverage: belowAverageEmployees,
     };
 
     res.json(categorizedEmployees);
