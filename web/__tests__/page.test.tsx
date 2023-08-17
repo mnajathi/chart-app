@@ -1,14 +1,16 @@
 import {render, screen} from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import Home from '@/app/page';
+import Card from '@/components/card';
 
-describe('Home', () => {
+describe('get Card Component title', () => {
 	it('renders a heading', () => {
-		render(<Home />);
+		render(<Card title="Managers Prodoscore" />);
 
-		const heading = screen.getByText(/Mohamed Najathi/i);
+		const heading = screen.getByRole('contentinfo');
+		expect(heading).toHaveTextContent('Managers Prodoscore');
 
-		expect(heading).toBeInTheDocument();
+		const heading2 = screen.getByText(/Managers Prodoscore/i);
+		expect(heading2).toBeInTheDocument();
 	});
 });

@@ -13,7 +13,9 @@ const Card: React.FC<CardProps> = ({title, children, className}) => {
 
 	return (
 		<div className={classes}>
-			<h3 className="text-md font-semibold mb-4">{title}</h3>
+			<h3 role="contentinfo" className="text-md font-semibold mb-4">
+				{title}
+			</h3>
 			{children}
 		</div>
 	);
