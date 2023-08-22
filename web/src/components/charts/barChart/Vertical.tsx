@@ -11,6 +11,7 @@ import {
 	Tooltip,
 } from 'chart.js';
 import {useRef, useState} from 'react';
+import annotationPlugin from 'chartjs-plugin-annotation';
 import {Bar, getElementAtEvent} from 'react-chartjs-2';
 
 ChartJS.register(
@@ -20,6 +21,7 @@ ChartJS.register(
 	Title,
 	Tooltip,
 	Legend,
+	annotationPlugin,
 );
 
 type VerticalBarChartProps = {
@@ -36,11 +38,34 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 		| undefined
 	>(undefined);
 	const chartRef = useRef<any>();
-	const options = {
+	const options: any = {
 		responsive: true,
+		scales: {
+			y: {
+				beginAtZero: true,
+			},
+		},
 		plugins: {
 			legend: {
 				position: 'bottom' as const,
+			},
+			annotation: {
+				animations: {
+					numbers: {
+						properties: ['x', 'y', 'x2', 'y2', 'width', 'height', 'radius'],
+						type: 'number',
+					},
+				},
+				annotations: {
+					box1: {
+						type: 'box',
+						xMin: 5.5,
+						xMax: 4.5,
+						yMin: 0,
+						yMax: 86.9,
+						backgroundColor: 'rgba(0, 0, 0, 0.5)',
+					},
+				},
 			},
 		},
 	};
@@ -56,18 +81,14 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 				backgroundColor: 'rgba(255, 99, 132, 0.5)',
 				hoverBorderWidth: 3,
 				hoverBorderColor: 'rgba(0, 0, 0, 0.5)',
-			},
-			{
-				label: 'Employee',
-				data: yAxis,
-				backgroundColor: 'rgba(0, 0, 0, 0.5)',
+				fill: false,
 			},
 		],
 		events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
 		plugins: {
 			tooltip: {
 				// Tooltip will only receive click events
-				events: ['click'],
+				events: ['mousemove'],
 			},
 		},
 	};
@@ -78,7 +99,8 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 				ref={chartRef}
 				options={options}
 				data={data}
-				onClick={(event: React.MouseEvent<HTMLCanvasElement>) => {
+				onContextMenu={(event: React.MouseEvent<HTMLCanvasElement>) => {
+					event.preventDefault();
 					const eventElement = getElementAtEvent(chartRef.current, event)[0];
 					if (eventElement) {
 						console.log(
@@ -104,22 +126,19 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 					{
 						title: 'Mark day as PTO',
 						onClick() {
-							console.log('Clicked on PTO');
-							console.log(chartRef.current);
+							alert('Clicked on PTO');
 						},
 					},
 					{
 						title: 'Download as SVG',
 						onClick() {
-							console.log('Clicked on SVG');
-							console.log(chartRef.current);
+							alert('Clicked on SVG');
 						},
 					},
 					{
 						title: 'Download as PNG',
 						onClick() {
-							console.log('Clicked on PNG');
-							console.log(chartRef.current);
+							alert('Clicked on PNG');
 						},
 					},
 				]}
