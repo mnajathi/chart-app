@@ -3,7 +3,7 @@ module.exports = {
 		browser: true,
 		es2021: true,
 	},
-	extends: ['xo', 'next', 'prettier', 'eslint:recommended'],
+	extends: ['xo', 'next', 'prettier', 'eslint:recommended', 'react-hooks'],
 	overrides: [
 		{
 			env: {
