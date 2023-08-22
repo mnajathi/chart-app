@@ -1,7 +1,7 @@
 'use client';
 
-import {useEffect, useRef, useState} from 'react';
-import {ItemType} from '.';
+import {useCallback, useEffect, useRef, useState} from 'react';
+import {type ItemType} from '.';
 
 type ContextMenuItemProps = {
 	x: number | undefined;
@@ -19,15 +19,18 @@ const ContextMenuItem: React.FC<ContextMenuItemProps> = ({
 	const [isVisible, setIsVisible] = useState<boolean>(true);
 	const contextMenuRef = useRef<HTMLDivElement | null>(null);
 
-	const handleClickOutside = (event: MouseEvent) => {
-		if (
-			contextMenuRef.current &&
-			!contextMenuRef.current.contains(event.target as Node)
-		) {
-			setIsVisible(false);
-			onClose();
-		}
-	};
+	const handleClickOutside = useCallback(
+		(event: MouseEvent) => {
+			if (
+				contextMenuRef.current &&
+				!contextMenuRef.current.contains(event.target as Node)
+			) {
+				setIsVisible(false);
+				onClose();
+			}
+		},
+		[onClose],
+	);
 
 	useEffect(() => {
 		document.addEventListener('mousedown', handleClickOutside);
@@ -35,7 +38,7 @@ const ContextMenuItem: React.FC<ContextMenuItemProps> = ({
 		return () => {
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
-	}, []);
+	}, [handleClickOutside]);
 
 	console.log(y, x);
 

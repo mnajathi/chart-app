@@ -78,7 +78,7 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 				ref={chartRef}
 				options={options}
 				data={data}
-				onClick={(event: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+				onClick={(event: React.MouseEvent<HTMLCanvasElement>) => {
 					const eventElement = getElementAtEvent(chartRef.current, event)[0];
 					if (eventElement) {
 						console.log(
@@ -93,8 +93,8 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 							x: eventElement.element.x + offsetX,
 							y: eventElement.element.y + offsetY,
 						});
-						const datasetIndex = eventElement.datasetIndex;
-						const index = eventElement.index;
+						const {datasetIndex} = eventElement;
+						const {index} = eventElement;
 						console.log('prodoscore', data.datasets[datasetIndex].data[index]);
 					}
 				}}
@@ -103,21 +103,21 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 				items={[
 					{
 						title: 'Mark day as PTO',
-						onClick: () => {
+						onClick() {
 							console.log('Clicked on PTO');
 							console.log(chartRef.current);
 						},
 					},
 					{
 						title: 'Download as SVG',
-						onClick: () => {
+						onClick() {
 							console.log('Clicked on SVG');
 							console.log(chartRef.current);
 						},
 					},
 					{
 						title: 'Download as PNG',
-						onClick: () => {
+						onClick() {
 							console.log('Clicked on PNG');
 							console.log(chartRef.current);
 						},

@@ -1,9 +1,9 @@
 'use client';
 
 import ContextMenuItem from './ContextMenuItem';
-import {ItemType} from '.';
+import {type ItemType} from '.';
 
-interface DynamicContextMenuProps {
+type DynamicContextMenuProps = {
 	items: ItemType[];
 	contextMenuPos:
 		| {
@@ -12,7 +12,7 @@ interface DynamicContextMenuProps {
 		  }
 		| undefined;
 	setContextMenuPos: ({x, y}: any) => void;
-}
+};
 
 const DynamicContextMenu: React.FC<DynamicContextMenuProps> = ({
 	items,
