@@ -69,19 +69,6 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 							drawTime: 'afterDatasetsDraw',
 						},
 					},
-					line2: {
-						adjustScaleRange: true,
-						type: 'line',
-						borderColor: ANNOTATION_COLOR_1,
-						borderWidth: 160,
-						scaleID: 'x',
-						value: 1,
-						label: {
-							display: false,
-							backgroundColor: 'black',
-							drawTime: 'afterDatasetsDraw',
-						},
-					},
 				},
 			},
 		},
@@ -116,16 +103,25 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 
 	const onPtoAddedBeforeHandler = (index: number) => {
 		const clonedOptions: any = structuredClone(options);
-		clonedOptions.plugins.annotation.annotations.line2.borderColor =
-			ANNOTATION_COLOR_1; // keep default annotation color
-		clonedOptions.plugins.annotation.annotations.line2.value = index;
+		clonedOptions.plugins.annotation.annotations[index] = {
+			...clonedOptions.plugins.annotation.annotations.line1,
+			scaleID: 'x',
+			borderColor: ANNOTATION_COLOR_1, // keep default annotation color
+			borderWidth: 160,
+			value: index,
+		};
 		setOptions(clonedOptions);
 	};
 
-	const onPtoAddedAfterHandler = () => {
+	const onPtoAddedAfterHandler = (index: number) => {
 		const clonedOptions: any = structuredClone(options);
-		clonedOptions.plugins.annotation.annotations.line2.borderColor =
-			ANNOTATION_COLOR_2;
+		clonedOptions.plugins.annotation.annotations[index] = {
+			...clonedOptions.plugins.annotation.annotations.line1,
+			scaleID: 'x',
+			borderColor: ANNOTATION_COLOR_2,
+			borderWidth: 160,
+			value: index,
+		};
 		setOptions(clonedOptions);
 	};
 
@@ -190,7 +186,10 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 			<Button
 				text="Make PTO is Done!"
 				onClick={() => {
-					onPtoAddedAfterHandler();
+					if (eventElement) {
+						const {index} = eventElement;
+						onPtoAddedAfterHandler(index); //update the options
+					}
 				}}
 			/>
 		</div>
