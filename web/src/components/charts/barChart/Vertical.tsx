@@ -1,6 +1,5 @@
 'use client';
 
-import DynamicContextMenu from '@/components/ContextMenu/DynamicContextMenu';
 import {
 	BarElement,
 	CategoryScale,
@@ -15,6 +14,9 @@ import {useRef, useState} from 'react';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import {Bar, getElementAtEvent} from 'react-chartjs-2';
 
+import Button from '@/components/fields/Button';
+import DynamicContextMenu from '@/components/ContextMenu/DynamicContextMenu';
+
 ChartJS.register(
 	CategoryScale,
 	LinearScale,
@@ -26,20 +28,15 @@ ChartJS.register(
 );
 
 type VerticalBarChartProps = {
-	xAxis: any[];
-	yAxis: any[];
+	xAxis: number[];
+	yAxis: string[];
 };
 
+const ANNOTATION_COLOR_1 = 'rgba(0, 0, 0, 0.6)';
+const ANNOTATION_COLOR_2 = 'darkGray';
+
 const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
-	const chartRef = useRef<any>();
-	const [contextMenuPos, setContextMenuPos] = useState<
-		| {
-				x: number;
-				y: number;
-		  }
-		| undefined
-	>(undefined);
-	const options: any = {
+	const initialOptions: any = {
 		responsive: true,
 		scales: {
 			y: {
@@ -47,13 +44,6 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 			},
 		},
 		plugins: {
-			events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
-			plugins: {
-				tooltip: {
-					// Tooltip will only receive click events
-					events: ['mousemove'],
-				},
-			},
 			legend: {
 				position: 'bottom' as const,
 			},
@@ -82,8 +72,8 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 					line2: {
 						adjustScaleRange: true,
 						type: 'line',
-						borderColor: 'rgba(0, 0, 0, 0.6)',
-						borderWidth: 180,
+						borderColor: ANNOTATION_COLOR_1,
+						borderWidth: 160,
 						scaleID: 'x',
 						value: 1,
 						label: {
@@ -97,7 +87,7 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 		},
 	};
 
-	const data: ChartData<'bar', any[], any> = {
+	const initialData: ChartData<'bar', number[], string> = {
 		labels: yAxis,
 		datasets: [
 			{
@@ -108,6 +98,35 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 				hoverBorderColor: 'rgba(0, 0, 0, 0.5)',
 			},
 		],
+	};
+
+	const chartRef = useRef<any>();
+	const [options, setOptions] = useState(initialOptions);
+	const [data] = useState<any>(initialData);
+	const [contextMenuPos, setContextMenuPos] = useState<
+		| {
+				x: number;
+				y: number;
+				index?: number;
+				dataIndex?: number;
+		  }
+		| undefined
+	>(undefined);
+	const [eventElement, setEventElement] = useState<any>(undefined);
+
+	const onPtoAddedBeforeHandler = (index: number) => {
+		const clonedOptions: any = structuredClone(options);
+		clonedOptions.plugins.annotation.annotations.line2.borderColor =
+			ANNOTATION_COLOR_1; // keep default annotation color
+		clonedOptions.plugins.annotation.annotations.line2.value = index;
+		setOptions(clonedOptions);
+	};
+
+	const onPtoAddedAfterHandler = () => {
+		const clonedOptions: any = structuredClone(options);
+		clonedOptions.plugins.annotation.annotations.line2.borderColor =
+			ANNOTATION_COLOR_2;
+		setOptions(clonedOptions);
 	};
 
 	return (
@@ -134,9 +153,9 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 							x: rect.left + eventElement.element.x + offsetX,
 							y: rect.top + eventElement.element.y + offsetY,
 						});
-						const {datasetIndex} = eventElement;
-						const {index} = eventElement;
+						const {datasetIndex, index} = eventElement;
 						console.log('prodoscore', data.datasets[datasetIndex].data[index]);
+						setEventElement(eventElement);
 					}
 				}}
 			/>
@@ -144,8 +163,11 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 				items={[
 					{
 						title: 'Mark day as PTO',
-						onClick() {
-							alert('Clicked on PTO');
+						onClick: () => {
+							if (eventElement) {
+								const {index} = eventElement;
+								onPtoAddedBeforeHandler(index); //update the options
+							}
 						},
 					},
 					{
@@ -163,6 +185,13 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 				]}
 				contextMenuPos={contextMenuPos}
 				setContextMenuPos={setContextMenuPos}
+			/>
+
+			<Button
+				text="Make PTO is Done!"
+				onClick={() => {
+					onPtoAddedAfterHandler();
+				}}
 			/>
 		</div>
 	);
