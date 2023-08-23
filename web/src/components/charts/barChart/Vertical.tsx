@@ -4,6 +4,7 @@ import DynamicContextMenu from '@/components/ContextMenu/DynamicContextMenu';
 import {
 	BarElement,
 	CategoryScale,
+	ChartData,
 	Chart as ChartJS,
 	Legend,
 	LinearScale,
@@ -30,6 +31,7 @@ type VerticalBarChartProps = {
 };
 
 const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
+	const chartRef = useRef<any>();
 	const [contextMenuPos, setContextMenuPos] = useState<
 		| {
 				x: number;
@@ -37,7 +39,6 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 		  }
 		| undefined
 	>(undefined);
-	const chartRef = useRef<any>();
 	const options: any = {
 		responsive: true,
 		scales: {
@@ -46,6 +47,13 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 			},
 		},
 		plugins: {
+			events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
+			plugins: {
+				tooltip: {
+					// Tooltip will only receive click events
+					events: ['mousemove'],
+				},
+			},
 			legend: {
 				position: 'bottom' as const,
 			},
@@ -57,23 +65,40 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 					},
 				},
 				annotations: {
-					box1: {
-						type: 'box',
-						xMin: 5.5,
-						xMax: 4.5,
-						yMin: 0,
-						yMax: 86.9,
-						backgroundColor: 'rgba(0, 0, 0, 0.5)',
+					line1: {
+						adjustScaleRange: true,
+						type: 'line',
+						yMin: 40,
+						yMax: 40,
+						borderColor: 'rgba(255, 99, 132, 0.5)',
+						borderWidth: 3,
+						value: 1,
+						label: {
+							display: false,
+							backgroundColor: 'black',
+							drawTime: 'afterDatasetsDraw',
+						},
+					},
+					line2: {
+						adjustScaleRange: true,
+						type: 'line',
+						borderColor: 'rgba(0, 0, 0, 0.6)',
+						borderWidth: 180,
+						scaleID: 'x',
+						value: 1,
+						label: {
+							display: false,
+							backgroundColor: 'black',
+							drawTime: 'afterDatasetsDraw',
+						},
 					},
 				},
 			},
 		},
 	};
 
-	const labels = yAxis;
-
-	const data = {
-		labels,
+	const data: ChartData<'bar', any[], any> = {
+		labels: yAxis,
 		datasets: [
 			{
 				label: 'Prodoscore',
@@ -81,20 +106,12 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 				backgroundColor: 'rgba(255, 99, 132, 0.5)',
 				hoverBorderWidth: 3,
 				hoverBorderColor: 'rgba(0, 0, 0, 0.5)',
-				fill: false,
 			},
 		],
-		events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
-		plugins: {
-			tooltip: {
-				// Tooltip will only receive click events
-				events: ['mousemove'],
-			},
-		},
 	};
 
 	return (
-		<>
+		<div className="relative">
 			<Bar
 				ref={chartRef}
 				options={options}
@@ -109,11 +126,13 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 							eventElement.index,
 						);
 
-						const offsetX = 200;
-						const offsetY = 50;
+						const rect = chartRef.current.chartArea;
+						const offsetX = 0;
+						const offsetY = 0;
+						// show context menu
 						setContextMenuPos({
-							x: eventElement.element.x + offsetX,
-							y: eventElement.element.y + offsetY,
+							x: rect.left + eventElement.element.x + offsetX,
+							y: rect.top + eventElement.element.y + offsetY,
 						});
 						const {datasetIndex} = eventElement;
 						const {index} = eventElement;
@@ -145,7 +164,7 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 				contextMenuPos={contextMenuPos}
 				setContextMenuPos={setContextMenuPos}
 			/>
-		</>
+		</div>
 	);
 };
 

@@ -56,7 +56,7 @@ const ContextMenuItem: React.FC<ContextMenuItemProps> = ({
 				{items.map(({title, onClick}: ItemType, idx: number) => (
 					<li
 						key={idx}
-						className="cursor-pointer py-2 px-4 text-sm hover:bg-blue-200 rounded"
+						className="cursor-pointer py-1 px-3 text-sm hover:bg-blue-200 rounded"
 						onClick={() => {
 							onClick();
 							setIsVisible(false);
