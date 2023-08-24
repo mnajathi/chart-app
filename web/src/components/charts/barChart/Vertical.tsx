@@ -114,7 +114,7 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 		| undefined
 	>(undefined);
 
-	const onPtoColorChangeHandler = (index: number, color: string) => {
+	const onPtoAddHandler = (index: number, color: string) => {
 		const clonedOptions: any = structuredClone(options);
 		clonedOptions.plugins.annotation.annotations[index] = {
 			...clonedOptions.plugins.annotation.annotations.line1,
@@ -126,7 +126,7 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 		setOptions(clonedOptions);
 	};
 
-	const onRemovePtoPointHandler = (index: number) => {
+	const onRemovePtoHandler = (index: number) => {
 		const clonedOptions: any = structuredClone(options);
 		delete clonedOptions.plugins.annotation.annotations[index];
 		setOptions(clonedOptions);
@@ -152,8 +152,7 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 							{
 								id: 1,
 								title: 'Mark day as PTO',
-								onClick: () =>
-									onPtoColorChangeHandler(eventElement.index, ANNOTATION_COLOR_1),
+								onClick: () => onPtoAddHandler(eventElement.index, ANNOTATION_COLOR_1),
 							},
 							...prevItems,
 						]);
@@ -162,7 +161,7 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 							{
 								id: 1,
 								title: 'Remove PTO',
-								onClick: () => onRemovePtoPointHandler(eventElement.index),
+								onClick: () => onRemovePtoHandler(eventElement.index),
 							},
 							...prevItems,
 						]);
@@ -187,9 +186,19 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 			<Button
 				text="Make PTO is Done!"
 				onClick={() => {
-					if (eventElement) {
-						const {index} = eventElement;
-						onPtoColorChangeHandler(index, ANNOTATION_COLOR_2);
+					const annotations = options.plugins.annotation.annotations;
+					const existingAnnotation = Object.keys(annotations).filter(
+						(key) => key !== 'line1',
+					);
+					console.log(annotations);
+					console.log(existingAnnotation);
+					for (const aKey in annotations) {
+						if (
+							existingAnnotation.includes(aKey) &&
+							annotations[aKey].borderColor !== ANNOTATION_COLOR_2
+						) {
+							onPtoAddHandler(annotations[aKey].value, ANNOTATION_COLOR_2);
+						}
 					}
 				}}
 			/>
