@@ -48,12 +48,7 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 				position: 'bottom' as const,
 			},
 			annotation: {
-				animations: {
-					numbers: {
-						properties: ['x', 'y', 'x2', 'y2', 'width', 'height', 'radius'],
-						type: 'number',
-					},
-				},
+				animations: false,
 				annotations: {
 					line1: {
 						adjustScaleRange: true,
@@ -87,7 +82,26 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 		],
 	};
 
+	const initialItems = [
+		{
+			id: 2,
+			title: 'Download as SVG',
+			onClick() {
+				alert('Clicked on SVG');
+			},
+		},
+		{
+			id: 3,
+			title: 'Download as PNG',
+			onClick() {
+				alert('Clicked on PNG');
+			},
+		},
+	];
+
 	const chartRef = useRef<any>();
+	const [items, setItems] = useState(initialItems);
+	const [eventElement, setEventElement] = useState<any>(undefined);
 	const [options, setOptions] = useState(initialOptions);
 	const [data] = useState<any>(initialData);
 	const [contextMenuPos, setContextMenuPos] = useState<
@@ -99,34 +113,27 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 		  }
 		| undefined
 	>(undefined);
-	const [eventElement, setEventElement] = useState<any>(undefined);
 
-	const onPtoAddedBeforeHandler = (index: number) => {
+	const onPtoColorChangeHandler = (index: number, color: string) => {
 		const clonedOptions: any = structuredClone(options);
 		clonedOptions.plugins.annotation.annotations[index] = {
 			...clonedOptions.plugins.annotation.annotations.line1,
 			scaleID: 'x',
-			borderColor: ANNOTATION_COLOR_1, // keep default annotation color
+			borderColor: color,
 			borderWidth: 160,
 			value: index,
 		};
 		setOptions(clonedOptions);
 	};
 
-	const onPtoAddedAfterHandler = (index: number) => {
+	const onRemovePtoPointHandler = (index: number) => {
 		const clonedOptions: any = structuredClone(options);
-		clonedOptions.plugins.annotation.annotations[index] = {
-			...clonedOptions.plugins.annotation.annotations.line1,
-			scaleID: 'x',
-			borderColor: ANNOTATION_COLOR_2,
-			borderWidth: 160,
-			value: index,
-		};
+		delete clonedOptions.plugins.annotation.annotations[index];
 		setOptions(clonedOptions);
 	};
 
 	return (
-		<div className="relative">
+		<>
 			<Bar
 				ref={chartRef}
 				options={options}
@@ -134,51 +141,45 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 				onContextMenu={(event: React.MouseEvent<HTMLCanvasElement>) => {
 					event.preventDefault();
 					const eventElement = getElementAtEvent(chartRef.current, event)[0];
-					if (eventElement) {
-						console.log(
-							eventElement.element.x,
-							eventElement.element.y,
-							eventElement.index,
-						);
+					const annotations = options.plugins.annotation.annotations;
+					const existingAnnotation = Object.keys(annotations).some(
+						(key) => Number(key) === eventElement?.index,
+					);
 
-						const rect = chartRef.current.chartArea;
-						const offsetX = 0;
-						const offsetY = 0;
-						// show context menu
-						setContextMenuPos({
-							x: rect.left + eventElement.element.x + offsetX,
-							y: rect.top + eventElement.element.y + offsetY,
-						});
-						const {datasetIndex, index} = eventElement;
-						console.log('prodoscore', data.datasets[datasetIndex].data[index]);
-						setEventElement(eventElement);
+					setItems(initialItems);
+					if (eventElement && !existingAnnotation) {
+						setItems((prevItems) => [
+							{
+								id: 1,
+								title: 'Mark day as PTO',
+								onClick: () =>
+									onPtoColorChangeHandler(eventElement.index, ANNOTATION_COLOR_1),
+							},
+							...prevItems,
+						]);
+					} else if (eventElement && existingAnnotation) {
+						setItems((prevItems) => [
+							{
+								id: 1,
+								title: 'Remove PTO',
+								onClick: () => onRemovePtoPointHandler(eventElement.index),
+							},
+							...prevItems,
+						]);
 					}
+
+					const rect = chartRef.current.chartArea;
+					const offsetX = 0;
+					const offsetY = 0;
+					setContextMenuPos({
+						x: (eventElement?.element.x || event.clientX) + rect.left + offsetX,
+						y: (eventElement?.element.y || event.clientY) + rect.top + offsetY,
+					});
+					setEventElement(eventElement);
 				}}
 			/>
 			<DynamicContextMenu
-				items={[
-					{
-						title: 'Mark day as PTO',
-						onClick: () => {
-							if (eventElement) {
-								const {index} = eventElement;
-								onPtoAddedBeforeHandler(index); //update the options
-							}
-						},
-					},
-					{
-						title: 'Download as SVG',
-						onClick() {
-							alert('Clicked on SVG');
-						},
-					},
-					{
-						title: 'Download as PNG',
-						onClick() {
-							alert('Clicked on PNG');
-						},
-					},
-				]}
+				items={items}
 				contextMenuPos={contextMenuPos}
 				setContextMenuPos={setContextMenuPos}
 			/>
@@ -188,11 +189,11 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 				onClick={() => {
 					if (eventElement) {
 						const {index} = eventElement;
-						onPtoAddedAfterHandler(index); //update the options
+						onPtoColorChangeHandler(index, ANNOTATION_COLOR_2);
 					}
 				}}
 			/>
-		</div>
+		</>
 	);
 };
 
