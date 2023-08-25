@@ -36,7 +36,9 @@ const ANNOTATION_COLOR_1 = 'rgba(0, 0, 0, 0.6)';
 const ANNOTATION_COLOR_2 = 'darkGray';
 
 const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
+	const chartRef = useRef<any>();
 	const initialOptions: any = {
+		backgroundColor: 'black',
 		responsive: true,
 		scales: {
 			y: {
@@ -46,6 +48,7 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 		plugins: {
 			legend: {
 				position: 'bottom' as const,
+				align: 'start' as const,
 			},
 			annotation: {
 				animations: false,
@@ -78,6 +81,7 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 				backgroundColor: 'rgba(255, 99, 132, 0.5)',
 				hoverBorderWidth: 3,
 				hoverBorderColor: 'rgba(0, 0, 0, 0.5)',
+				fill: 'start',
 			},
 		],
 	};
@@ -87,19 +91,28 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 			id: 2,
 			title: 'Download as SVG',
 			onClick() {
-				alert('Clicked on SVG');
+				if (chartRef.current) {
+					const link = document.createElement('a');
+					link.download = 'chart.png';
+					link.href = chartRef.current.toBase64Image();
+					link.click();
+				}
 			},
 		},
 		{
 			id: 3,
 			title: 'Download as PNG',
 			onClick() {
-				alert('Clicked on PNG');
+				if (chartRef.current) {
+					const link = document.createElement('a');
+					link.download = 'chart.png';
+					link.href = chartRef.current.toBase64Image();
+					link.click();
+				}
 			},
 		},
 	];
 
-	const chartRef = useRef<any>();
 	const [items, setItems] = useState(initialItems);
 	const [eventElement, setEventElement] = useState<any>(undefined);
 	const [options, setOptions] = useState(initialOptions);
