@@ -81,7 +81,6 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 				backgroundColor: 'rgba(255, 99, 132, 0.5)',
 				hoverBorderWidth: 3,
 				hoverBorderColor: 'rgba(0, 0, 0, 0.5)',
-				fill: 'start',
 			},
 		],
 	};
@@ -91,6 +90,9 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 			id: 2,
 			title: 'Download as SVG',
 			onClick() {
+				// generate the download svg image in chart js graph
+				
+
 				if (chartRef.current) {
 					const link = document.createElement('a');
 					link.download = 'chart.png';
