@@ -90,12 +90,9 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 			id: 2,
 			title: 'Download as SVG',
 			onClick() {
-				// generate the download svg image in chart js graph
-				
-
 				if (chartRef.current) {
 					const link = document.createElement('a');
-					link.download = 'chart.png';
+					link.download = 'Employee Prodoscore.png';
 					link.href = chartRef.current.toBase64Image();
 					link.click();
 				}
@@ -107,7 +104,7 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 			onClick() {
 				if (chartRef.current) {
 					const link = document.createElement('a');
-					link.download = 'chart.png';
+					link.download = 'Employee Prodoscore.png';
 					link.href = chartRef.current.toBase64Image();
 					link.click();
 				}
@@ -182,12 +179,9 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 						]);
 					}
 
-					const rect = chartRef.current.chartArea;
-					const offsetX = 0;
-					const offsetY = 0;
 					setContextMenuPos({
-						x: (eventElement?.element.x || event.clientX) + rect.left + offsetX,
-						y: (eventElement?.element.y || event.clientY) + rect.top + offsetY,
+						x: event.clientX,
+						y: event.clientY,
 					});
 					setEventElement(eventElement);
 				}}

@@ -45,18 +45,18 @@ const ContextMenuItem: React.FC<ContextMenuItemProps> = ({
 	return isVisible ? (
 		<div
 			ref={contextMenuRef}
-			className="absolute bg-white rounded border border-gray-300 shadow-md p-2"
+			className="absolute bg-white border border-gray-300 shadow-md text-center"
 			style={{
 				top: y,
 				left: x,
 				transform: `translate(${window.scrollX}px, ${window.scrollY}px)`,
 			}}
 		>
-			<ul className="list-none p-0 m-0">
+			<ul className="list-none p-0 m-0 min-w-48">
 				{items.map(({title, onClick}: ItemType, idx: number) => (
 					<li
 						key={idx}
-						className="cursor-pointer py-1 px-3 text-sm hover:bg-blue-200 rounded"
+						className="cursor-pointer py-1 px-4 text-sm border-b-2 border-slate-200 border-solid hover:bg-blue-200"
 						onClick={() => {
 							onClick();
 							setIsVisible(false);
