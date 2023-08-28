@@ -45,7 +45,7 @@ const ContextMenuItem: React.FC<ContextMenuItemProps> = ({
 	return isVisible ? (
 		<div
 			ref={contextMenuRef}
-			className="absolute bg-white border border-gray-300 shadow-md text-center"
+			className="absolute bg-white border border-gray-300 shadow-md"
 			style={{
 				top: y,
 				left: x,

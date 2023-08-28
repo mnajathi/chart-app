@@ -10,7 +10,7 @@ interface IndexProps {
 }
 
 const Index: React.FC<IndexProps> = ({}) => {
-	const data: any = {
+	const initialData: any = {
 		labels: [
 			'03:30',
 			'03:40',
@@ -150,21 +150,16 @@ const Index: React.FC<IndexProps> = ({}) => {
 				fill: false,
 				borderColor: 'rgb(75, 192, 192)',
 				tension: 0.1,
+				barThickness: 164,
 			},
 		],
 	};
 
-	const [scrollPosition, setScrollPosition] = useState(0);
-
-	const handleScroll = throttle((event: React.UIEvent<HTMLDivElement>) => {
-		setScrollPosition(event.currentTarget.scrollLeft);
-	}, 100);
-
 	return (
-		<div>
-			<LineChart data={data} onScroll={handleScroll} />
-			<BarChart data={data} onScroll={handleScroll} />
-		</div>
+		<>
+			<LineChart initialData={initialData} />
+			<BarChart initialData={initialData} />
+		</>
 	);
 };
 

@@ -9,6 +9,8 @@ import {
 	LinearScale,
 	Title,
 	Tooltip,
+	elements,
+	registerables,
 } from 'chart.js';
 import {useRef, useState} from 'react';
 import annotationPlugin from 'chartjs-plugin-annotation';
@@ -25,6 +27,7 @@ ChartJS.register(
 	Tooltip,
 	Legend,
 	annotationPlugin,
+	...registerables,
 );
 
 type VerticalBarChartProps = {
@@ -77,7 +80,7 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 		datasets: [
 			{
 				label: 'Prodoscore',
-				data: xAxis,
+				data: [...xAxis, 5],
 				backgroundColor: 'rgba(255, 99, 132, 0.5)',
 				hoverBorderWidth: 3,
 				hoverBorderColor: 'rgba(0, 0, 0, 0.5)',
@@ -115,7 +118,7 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 	const [items, setItems] = useState(initialItems);
 	const [eventElement, setEventElement] = useState<any>(undefined);
 	const [options, setOptions] = useState(initialOptions);
-	const [data] = useState<any>(initialData);
+	const [data, setData] = useState<any>(initialData);
 	const [contextMenuPos, setContextMenuPos] = useState<
 		| {
 				x: number;
@@ -157,9 +160,14 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 					const existingAnnotation = Object.keys(annotations).some(
 						(key) => Number(key) === eventElement?.index,
 					);
+					const isPto = Object.keys(annotations).some(
+						(key) =>
+							Number(key) === eventElement?.index &&
+							annotations[key].borderColor === ANNOTATION_COLOR_2,
+					);
 
 					setItems(initialItems);
-					if (eventElement && !existingAnnotation) {
+					if (eventElement && !existingAnnotation && !isPto) {
 						setItems((prevItems) => [
 							{
 								id: 1,
@@ -168,7 +176,7 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 							},
 							...prevItems,
 						]);
-					} else if (eventElement && existingAnnotation) {
+					} else if (eventElement && existingAnnotation && !isPto) {
 						setItems((prevItems) => [
 							{
 								id: 1,
@@ -193,14 +201,12 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 			/>
 
 			<Button
-				text="Make PTO is Done!"
+				text="Accept the PTO!"
 				onClick={() => {
 					const annotations = options.plugins.annotation.annotations;
 					const existingAnnotation = Object.keys(annotations).filter(
 						(key) => key !== 'line1',
 					);
-					console.log(annotations);
-					console.log(existingAnnotation);
 					for (const aKey in annotations) {
 						if (
 							existingAnnotation.includes(aKey) &&
@@ -209,6 +215,30 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 							onPtoAddHandler(annotations[aKey].value, ANNOTATION_COLOR_2);
 						}
 					}
+				}}
+			/>
+
+			<div className="my-4" />
+
+			<Button
+				className="mr-4"
+				text="Add Node"
+				onClick={() => {
+					const clonedData: any = structuredClone(data);
+					clonedData.datasets[0].data.push(Number(Math.random() * 100));
+					clonedData.labels.push(Math.random().toString(36).substring(7));
+					setData(clonedData);
+				}}
+			/>
+
+			<Button
+				className="mr-4"
+				text="Remove Node"
+				onClick={() => {
+					const clonedData: any = structuredClone(data);
+					clonedData.datasets[0].data.splice(-1);
+					clonedData.labels.splice(-1);
+					setData(clonedData);
 				}}
 			/>
 		</>

@@ -10,8 +10,7 @@ import {
 	Title,
 	Tooltip,
 } from 'chart.js';
-import {throttle} from 'lodash';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {Bar} from 'react-chartjs-2';
 import annotationPlugin from 'chartjs-plugin-annotation';
 
@@ -25,86 +24,63 @@ ChartJS.register(
 	annotationPlugin,
 );
 
-interface BarChartProps {
-	[key: string]: any;
-}
-
 type ChartProps = {
-	data: ChartData<'bar'>;
-	height?: number;
-	width?: number;
-	onScroll?: any;
+	initialData: ChartData<'bar'>;
 };
 
-const BarChart: React.FC<ChartProps> = ({
-	data,
-	height = 200,
-	width = 600,
-	onScroll,
-}) => {
-	const chartRef = useRef<any>();
-	const [scrollPosition, setScrollPosition] = useState(0);
-
-	const handleScroll = throttle((event: React.UIEvent<HTMLCanvasElement>) => {
-		setScrollPosition(event.currentTarget.scrollLeft);
-	}, 100);
-
-	useEffect(() => {
-		if (chartRef.current && chartRef.current.chartInstance) {
-			chartRef.current.chartInstance.options.plugins.annotation.annotations = [
-				{
-					type: 'line',
-					mode: 'vertical',
-					scaleID: 'x',
-					value: 0,
-					borderColor: 'red',
-					borderWidth: 2,
-					label: {
-						backgroundColor: 'red',
-						content: 'Focus',
-						enabled: true,
+const BarChart: React.FC<ChartProps> = ({initialData}) => {
+	const initialOptions: any = {
+		responsive: true,
+		scales: {
+			x: {
+				stacked: true,
+				min: 0,
+				max: 8,
+			},
+			y: {
+				beginAtZero: true,
+			},
+		},
+		maintainAspectRatio: false,
+		plugins: {
+			annotation: {
+				annotations: [
+					{
+						type: 'line',
+						scaleID: 'x',
+						value: 0,
+						borderColor: 'red',
+						borderWidth: 2,
+						label: {
+							backgroundColor: 'red',
+							content: 'Focus',
+						},
 					},
-				},
-			];
-			chartRef.current.chartInstance.update();
-		}
-	}, []);
+				],
+			},
+		},
+	};
 
-	useEffect(() => {
-		if (chartRef.current && chartRef.current.chartInstance) {
-			chartRef.current.chartInstance.options.plugins.annotation.annotations[0].value =
-				scrollPosition;
-			chartRef.current.chartInstance.update();
-		}
-	}, [scrollPosition]);
+	const chartRef = useRef<any>();
+	const [data] = useState(initialData);
+	const [options] = useState(initialOptions);
 
 	return (
-		<div className="relative my-8">
+		<div className="h-full">
 			<Bar
 				ref={chartRef}
 				data={data}
-				height={height}
-				width={width}
-				options={{
-					responsive: true,
-					scales: {
-						x: {
-							ticks: {
-								autoSkip: true,
-								maxTicksLimit: 5,
-							},
-						},
-						y: {
-							beginAtZero: true,
-						},
-					},
-				}}
-				onScroll={handleScroll}
+				options={options}
+				// plugins={[
+				// 	{
+				// 		id: 'moveChart',
+				// 		afterDraw: (chart: any, args: any, pluginOptions: any) => {
+
+				// 		}
+				// 	}
+				// ]}
+				height={320}
 			/>
-			<div
-				className="absolute top-0 bottom-0 left-0 right-0"
-				onScroll={onScroll}
-			></div>
 		</div>
 	);
 };

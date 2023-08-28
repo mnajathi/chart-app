@@ -1,4 +1,5 @@
 'use client';
+
 import {
 	CategoryScale,
 	ChartData,
@@ -10,9 +11,11 @@ import {
 	Title,
 	Tooltip,
 } from 'chart.js';
-import {useRef, useEffect} from 'react';
+import {useRef, useState} from 'react';
 import {Line} from 'react-chartjs-2';
 import annotationPlugin from 'chartjs-plugin-annotation';
+import InputField from '../fields/InputField';
+import Button from '../fields/Button';
 
 ChartJS.register(
 	CategoryScale,
@@ -26,77 +29,153 @@ ChartJS.register(
 );
 
 type ChartProps = {
-	data: ChartData<'line'>;
-	height?: number;
-	width?: number;
-	onScroll?: any;
+	initialData: ChartData<'line'>;
 };
 
-const LineChart: React.FC<ChartProps> = ({
-	data,
-	height = 400,
-	width = 600,
-	onScroll,
-}) => {
+const LineChart: React.FC<ChartProps> = ({initialData}) => {
 	const chartRef = useRef<any>();
+	const [bgRange, setBgRange] = useState<any>({
+		min: 0,
+		max: 14,
+	});
+	const [data] = useState(initialData);
+	const [options, setOptions] = useState<any>({
+		animation: false,
+		responsive: true,
+		plugins: {
+			backgroundColorRange: {
+				min: bgRange.min,
+				max: bgRange.max,
+				backgroundColor: 'rgba(255, 99, 132, 0.4)',
+			},
+			legend: {
+				position: 'bottom' as const,
+				align: 'start' as const,
+			},
+			title: {
+				display: true,
+				text: 'Performance throughout the day (Los Angeles)',
+			},
+		},
+		scales: {
+			y: {
+				beginAtZero: true,
+			},
+		},
+		maintainAspectRatio: false,
+	});
 
-	useEffect(() => {
-		if (chartRef.current && chartRef.current.chartInstance) {
-			chartRef.current.chartInstance.options.plugins.annotation.annotations = [
-				{
-					type: 'line',
-					mode: 'horizontal',
-					scaleID: 'y',
-					value: 0,
-					borderColor: 'red',
-					borderWidth: 2,
-					label: {
-						backgroundColor: 'red',
-						content: 'Focus',
-						enabled: true,
-					},
-				},
-			];
-			chartRef.current.chartInstance.update();
-		}
-	}, []);
+	const onChange = (e: any) => {
+		const {id, value} = e.target;
+		console.log(id, value);
+		setBgRange({
+			...bgRange,
+			[id]: Number(value),
+		});
+	};
 
 	return (
-		<div className="w-full h-auto min-h-60">
-			<Line
-				ref={chartRef}
-				data={data}
-				height={height}
-				width={width}
-				options={{
-					responsive: true,
-					plugins: {
-						legend: {
-							position: 'top' as const,
-						},
-						title: {
-							display: true,
-							text: 'Performance throughout the day (Los Angeles)',
-						},
-					},
-					scales: {
-						x: {
-							ticks: {
-								autoSkip: true,
-								maxTicksLimit: 2,
+		<>
+			<div className="h-full">
+				<Line
+					ref={chartRef}
+					data={data}
+					options={options}
+					plugins={[
+						{
+							id: 'backgroundColorRange',
+							beforeDatasetsDraw: (chart: any, args: any, pluginOptions: any) => {
+								const {
+									ctx,
+									chartArea: {top, bottom, left, right, width, height},
+									scales: {x, y},
+								} = chart;
+								ctx.save();
+								ctx.fillStyle = pluginOptions.backgroundColor;
+								ctx.fillRect(
+									x.getPixelForValue(pluginOptions.min),
+									top,
+									x.getPixelForValue(pluginOptions.max) -
+										x.getPixelForValue(pluginOptions.min),
+									height,
+								);
 							},
 						},
-						y: {
-							beginAtZero: true,
-						},
-					},
-				}}
-			/>
-			<div
-				className="absolute top-0 bottom-0 left-0 right-0"
-				onScroll={onScroll}
-			></div>
-		</div>
+					]}
+					height={320}
+				/>
+			</div>
+
+			<div className=" my-4">
+				BG Range: <div className="mb-3" />
+				Min:{' '}
+				<InputField
+					className="mr-4"
+					type="number"
+					id="min"
+					onChange={onChange}
+					defaultValue={0}
+				/>
+				Max{' '}
+				<InputField
+					className="mr-4"
+					type="number"
+					id="max"
+					onChange={onChange}
+					defaultValue={14}
+				/>
+				<Button
+					text="submit"
+					onClick={() => {
+						setOptions({
+							...options,
+							plugins: {
+								...options.plugins,
+								backgroundColorRange: {
+									...options.plugins.backgroundColorRange,
+									min: bgRange.min,
+									max: bgRange.max,
+								},
+							},
+						});
+					}}
+				/>
+				<br />
+				<br />
+				<Button
+					text="onScrollUp"
+					onClick={() => {
+						setOptions({
+							...options,
+							plugins: {
+								...options.plugins,
+								backgroundColorRange: {
+									...options.plugins.backgroundColorRange,
+									min: (bgRange.min += 14),
+									max: (bgRange.max += 14),
+								},
+							},
+						});
+					}}
+				/>
+				<Button
+					text="onScrollDown"
+					onClick={() => {
+						setOptions({
+							...options,
+							plugins: {
+								...options.plugins,
+								backgroundColorRange: {
+									...options.plugins.backgroundColorRange,
+									min: (bgRange.min -= 14),
+									max: (bgRange.max -= 14),
+								},
+							},
+						});
+					}}
+				/>
+			</div>
+		</>
 	);
 };
 
