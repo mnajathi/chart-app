@@ -12,7 +12,7 @@ const Header: React.FC<HeaderProps> = () => (
 			<div className="flex items-center space-x-6">
 				<Link href="/" className="text-dark text-lg font-semibold">
 					<Image
-						src="https://qa02.prv-prodoscore.com/static/img/prodoscore.png"
+						src="https://app.prodoscore.com/static/img/prodoscore.png"
 						alt="Your Logo"
 						width={30}
 						height={30}

@@ -9,7 +9,6 @@ import {
 	LinearScale,
 	Title,
 	Tooltip,
-	elements,
 	registerables,
 } from 'chart.js';
 import {useRef, useState} from 'react';
@@ -43,6 +42,7 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 	const initialOptions: any = {
 		backgroundColor: 'black',
 		responsive: true,
+		animations: false,
 		scales: {
 			y: {
 				beginAtZero: true,
@@ -94,9 +94,11 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 			title: 'Download as SVG',
 			onClick() {
 				if (chartRef.current) {
+					const svgString = chartRef.current.toBase64Image('image/svg+xml', 1);
+					const blob = new Blob([svgString], {type: 'image/svg+xml'});
 					const link = document.createElement('a');
-					link.download = 'Employee Prodoscore.png';
-					link.href = chartRef.current.toBase64Image();
+					link.download = 'chart.svg';
+					link.href = URL.createObjectURL(blob);
 					link.click();
 				}
 			},
@@ -108,7 +110,7 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 				if (chartRef.current) {
 					const link = document.createElement('a');
 					link.download = 'Employee Prodoscore.png';
-					link.href = chartRef.current.toBase64Image();
+					link.href = chartRef.current.toBase64Image('image/png', 1);
 					link.click();
 				}
 			},
@@ -116,7 +118,6 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 	];
 
 	const [items, setItems] = useState(initialItems);
-	const [eventElement, setEventElement] = useState<any>(undefined);
 	const [options, setOptions] = useState(initialOptions);
 	const [data, setData] = useState<any>(initialData);
 	const [contextMenuPos, setContextMenuPos] = useState<
@@ -191,7 +192,6 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 						x: event.clientX,
 						y: event.clientY,
 					});
-					setEventElement(eventElement);
 				}}
 			/>
 			<DynamicContextMenu

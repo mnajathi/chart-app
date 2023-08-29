@@ -1,13 +1,16 @@
 'use client';
 
-import React, {useState} from 'react';
+import React from 'react';
+
 import LineChart from './LineChart';
 import BarChart from './BarChart';
-import {throttle} from 'lodash';
+import useAppStore from '@/store';
 
 interface IndexProps {
 	[key: string]: any;
 }
+
+const DATA_LENGTH = 8;
 
 const Index: React.FC<IndexProps> = ({}) => {
 	const initialData: any = {
@@ -155,10 +158,22 @@ const Index: React.FC<IndexProps> = ({}) => {
 		],
 	};
 
+	const {bgRange, setBgRange} = useAppStore();
+
 	return (
 		<>
-			<LineChart initialData={initialData} />
-			<BarChart initialData={initialData} />
+			<LineChart
+				initialData={initialData}
+				bgRange={bgRange}
+				setBgRange={setBgRange}
+				dataLength={DATA_LENGTH}
+			/>
+			<BarChart
+				initialData={initialData}
+				bgRange={bgRange}
+				setBgRange={setBgRange}
+				dataLength={DATA_LENGTH}
+			/>
 		</>
 	);
 };
