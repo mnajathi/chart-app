@@ -179,51 +179,48 @@ const BarChart: React.FC<ChartProps> = ({
 								}
 							});
 						},
-						afterDraw: useCallback(
-							(chart: any, args: any, pluginOptions: any) => {
-								const {
-									ctx,
-									chartArea: {top, bottom, left, right, width, height},
-								} = chart;
-								drawHandler(ctx, left, 8, height, top); // left arrow
-								drawHandler(ctx, right, -8, height, top); // right arrow
+						afterDraw: (chart: any, args: any, pluginOptions: any) => {
+							const {
+								ctx,
+								chartArea: {top, bottom, left, right, width, height},
+							} = chart;
+							drawHandler(ctx, left, 8, height, top); // left arrow
+							drawHandler(ctx, right, -8, height, top); // right arrow
 
-								// scrollbar
-								ctx.beginPath();
-								ctx.fillStyle = 'lightgrey';
-								ctx.rect(left + 15, bottom + 30, width - 30, 15);
-								ctx.fill();
-								ctx.closePath();
+							// scrollbar
+							ctx.beginPath();
+							ctx.fillStyle = 'lightgrey';
+							ctx.rect(left + 15, bottom + 30, width - 30, 15);
+							ctx.fill();
+							ctx.closePath();
 
-								// scrollbar thumb
-								ctx.beginPath();
-								ctx.fillStyle = 'black';
-								ctx.rect(left, bottom + 30, 15, 15);
-								ctx.rect(right - 15, bottom + 30, 15, 15);
-								ctx.fill();
-								ctx.closePath();
+							// scrollbar thumb
+							ctx.beginPath();
+							ctx.fillStyle = 'black';
+							ctx.rect(left, bottom + 30, 15, 15);
+							ctx.rect(right - 15, bottom + 30, 15, 15);
+							ctx.fill();
+							ctx.closePath();
 
-								// movable scrollbar thumb
-								let startingPoint =
-									left +
-									15 +
-									((width - 30) / data.datasets[0].data.length) *
-										chartRef.current.scales.x.min;
-								const barWidth =
-									((width - 30) / data.datasets[0].data.length) * (dataLength + 1);
-								const totalWidth = startingPoint + barWidth;
-								if (totalWidth > width) {
-									startingPoint = right - 15 - barWidth;
-								}
+							// movable scrollbar thumb
+							let startingPoint =
+								left +
+								15 +
+								((width - 30) / data.datasets[0].data.length) *
+									chartRef.current.scales.x.min;
+							const barWidth =
+								((width - 30) / data.datasets[0].data.length) * (dataLength + 1);
+							const totalWidth = startingPoint + barWidth;
+							if (totalWidth > width) {
+								startingPoint = right - 15 - barWidth;
+							}
 
-								ctx.beginPath();
-								ctx.fillStyle = 'grey';
-								ctx.rect(startingPoint, bottom + 30, barWidth, 15);
-								ctx.fill();
-								ctx.closePath();
-							},
-							[bgRange, data.datasets, dataLength],
-						),
+							ctx.beginPath();
+							ctx.fillStyle = 'grey';
+							ctx.rect(startingPoint, bottom + 30, barWidth, 15);
+							ctx.fill();
+							ctx.closePath();
+						},
 					},
 					{
 						id: 'hoverMarkerBackground',
