@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, {useRef, useState} from 'react';
 
 import LineChart from './LineChart';
 import BarChart from './BarChart';
@@ -158,21 +158,20 @@ const Index: React.FC<IndexProps> = ({}) => {
 		],
 	};
 
-	const {bgRange, setBgRange} = useAppStore();
+	const [barChart, setBarChart] = useState<any>(undefined);
+	const hoverMarkerRef = useRef(undefined);
 
 	return (
 		<>
 			<LineChart
 				initialData={initialData}
-				bgRange={bgRange}
-				setBgRange={setBgRange}
-				dataLength={DATA_LENGTH}
+				hoverMarkerRef={hoverMarkerRef}
+				barChart={barChart}
 			/>
 			<BarChart
 				initialData={initialData}
-				bgRange={bgRange}
-				setBgRange={setBgRange}
 				dataLength={DATA_LENGTH}
+				hoverMarkerRef={hoverMarkerRef}
 			/>
 		</>
 	);

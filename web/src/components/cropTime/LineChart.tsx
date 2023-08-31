@@ -1,5 +1,6 @@
 'use client';
 
+import useAppStore from '@/store';
 import {
 	CategoryScale,
 	ChartData,
@@ -28,26 +29,24 @@ ChartJS.register(
 
 type ChartProps = {
 	initialData: ChartData<'line'>;
-	bgRange: {
-		min: number;
-		max: number;
-	};
-	setBgRange: (bgRange: {min: number; max: number}) => void;
-	dataLength: number;
+	hoverMarkerRef: any;
+	barChart: any;
 };
 
 const LineChart: React.FC<ChartProps> = ({
 	initialData,
-	bgRange,
-	setBgRange,
-	dataLength,
+	hoverMarkerRef,
+	barChart,
 }) => {
+	const {bgRange} = useAppStore();
 	const initialOptions: any = {
 		animation: false,
 		responsive: true,
 		plugins: {
 			backgroundColorRange: {
 				backgroundColor: 'rgba(255, 99, 132, 0.2)',
+				min: bgRange.min,
+				max: bgRange.max,
 			},
 			legend: {
 				position: 'bottom' as const,
@@ -68,17 +67,7 @@ const LineChart: React.FC<ChartProps> = ({
 
 	const chartRef = useRef<any>();
 	const [data] = useState(initialData);
-	const [options, setOptions] = useState<any>({
-		...initialOptions,
-		plugins: {
-			...initialOptions.plugins,
-			backgroundColorRange: {
-				...initialOptions.plugins.backgroundColorRange,
-				min: bgRange.min,
-				max: bgRange.max,
-			},
-		},
-	});
+	const [options, setOptions] = useState<any>(initialOptions);
 
 	useEffect(() => {
 		setOptions((prevOptions: any) => ({
@@ -100,6 +89,26 @@ const LineChart: React.FC<ChartProps> = ({
 				ref={chartRef}
 				data={data}
 				options={options}
+				onTouchMove={(e: any) => {
+					if (!barChart) return;
+					const {
+						ctx,
+						chartArea: {top, bottom, _, right},
+					} = barChart;
+					if (hoverMarkerRef.current === undefined) return;
+
+					ctx.save();
+					ctx.beginPath();
+					ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
+					ctx.fillStyle = 'rgba(0, 0, 0, .1)';
+					ctx.lineWidth = 2;
+					ctx.moveTo(hoverMarkerRef.current, top);
+					ctx.lineTo(hoverMarkerRef.current, bottom);
+					ctx.stroke();
+					ctx.lineTo(right, bottom);
+					ctx.lineTo(right, top);
+					ctx.closePath();
+				}}
 				plugins={[
 					{
 						id: 'backgroundColorRange',
@@ -118,6 +127,37 @@ const LineChart: React.FC<ChartProps> = ({
 									x.getPixelForValue(pluginOptions.min),
 								height,
 							);
+						},
+					},
+					{
+						id: 'hoverMarkerBackground',
+						afterDatasetsDraw: (chart: any, args: any, plugins: any) => {
+							const {
+								ctx,
+								chartArea: {top, bottom, _, right},
+							} = chart;
+							if (hoverMarkerRef.current === undefined) return;
+
+							ctx.save();
+							ctx.beginPath();
+							ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
+							ctx.fillStyle = 'rgba(0, 0, 0, .1)';
+							ctx.lineWidth = 2;
+							ctx.moveTo(hoverMarkerRef.current, top);
+							ctx.lineTo(hoverMarkerRef.current, bottom);
+							ctx.stroke();
+							ctx.lineTo(right, bottom);
+							ctx.lineTo(right, top);
+							ctx.closePath();
+						},
+						afterEvent: (chart: any, args: any, pluginOptions: any) => {
+							const xCoor = args.event.x;
+							if (args.inChartArea) {
+								hoverMarkerRef.current = xCoor;
+							} else {
+								hoverMarkerRef.current = undefined;
+							}
+							args.changed = true;
 						},
 					},
 				]}

@@ -10,9 +10,10 @@ import {
 	Title,
 	Tooltip,
 } from 'chart.js';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {Bar} from 'react-chartjs-2';
 import annotationPlugin from 'chartjs-plugin-annotation';
+import useAppStore from '@/store';
 
 ChartJS.register(
 	CategoryScale,
@@ -26,64 +27,39 @@ ChartJS.register(
 
 type ChartProps = {
 	initialData: ChartData<'bar'>;
-	bgRange: {
-		min: number;
-		max: number;
-	};
-	setBgRange: (bgRange: {min: number; max: number}) => void;
 	dataLength: number;
+	hoverMarkerRef: any;
 };
 
 const BarChart: React.FC<ChartProps> = ({
 	initialData,
-	bgRange,
-	setBgRange,
 	dataLength,
+	hoverMarkerRef,
 }) => {
+	const {bgRange, setBgRange} = useAppStore();
 	const initialOptions: any = {
 		layout: {
 			padding: {
 				right: 18,
+				bottom: 30,
 			},
 		},
 		responsive: true,
 		scales: {
+			x: {
+				min: bgRange.min,
+				max: bgRange.max,
+			},
 			y: {
 				beginAtZero: true,
 			},
 		},
 		maintainAspectRatio: false,
-		plugins: {
-			annotation: {
-				annotations: [
-					{
-						type: 'line',
-						scaleID: 'x',
-						value: 5,
-						borderColor: 'red',
-						borderWidth: 2,
-						label: {
-							backgroundColor: 'red',
-							content: 'Focus',
-						},
-					},
-				],
-			},
-		},
 	};
 
 	const chartRef = useRef<any>();
 	const [data] = useState(initialData);
-	const [options, setOptions] = useState({
-		...initialOptions,
-		scales: {
-			...initialOptions.scales,
-			x: {
-				min: bgRange.min,
-				max: bgRange.max,
-			},
-		},
-	});
+	const [options, setOptions] = useState(initialOptions);
 
 	useEffect(() => {
 		setOptions((prevOptions: any) => ({
@@ -101,7 +77,6 @@ const BarChart: React.FC<ChartProps> = ({
 	const drawHandler = (
 		ctx: any,
 		x1: number,
-		y1: number,
 		pixel: number,
 		height: number,
 		top: number,
@@ -126,6 +101,42 @@ const BarChart: React.FC<ChartProps> = ({
 		ctx.lineTo(x1 + pixel, height / 2 + top + 7.5);
 		ctx.stroke();
 		ctx.closePath();
+	};
+
+	const scrollWheelHandler = (
+		wheel: React.WheelEvent<HTMLCanvasElement>,
+		chart: any,
+	) => {
+		// scroll up
+		if (wheel.deltaY < 0) {
+			const clonedOptions: any = structuredClone(options);
+			clonedOptions.scales.x.min -= dataLength;
+			clonedOptions.scales.x.max -= dataLength;
+			if (clonedOptions.scales.x.min <= 0) {
+				clonedOptions.scales.x.min = 0;
+				clonedOptions.scales.x.max = dataLength - 1;
+			}
+			setBgRange({
+				min: clonedOptions.scales.x.min,
+				max: clonedOptions.scales.x.max,
+			});
+		}
+
+		// scroll down
+		if (wheel.deltaY > 0) {
+			const clonedOptions: any = structuredClone(options);
+			clonedOptions.scales.x.min += dataLength;
+			clonedOptions.scales.x.max += dataLength;
+			if (clonedOptions.scales.x.max >= data.datasets[0].data.length) {
+				clonedOptions.scales.x.min =
+					data.datasets[0].data.length - (dataLength - 1);
+				clonedOptions.scales.x.max = data.datasets[0].data.length;
+			}
+			setBgRange({
+				min: clonedOptions.scales.x.min,
+				max: clonedOptions.scales.x.max,
+			});
+		}
 	};
 
 	return (
@@ -168,13 +179,81 @@ const BarChart: React.FC<ChartProps> = ({
 								}
 							});
 						},
-						afterDraw: (chart: any, args: any, pluginOptions: any) => {
+						afterDraw: useCallback(
+							(chart: any, args: any, pluginOptions: any) => {
+								const {
+									ctx,
+									chartArea: {top, bottom, left, right, width, height},
+								} = chart;
+								drawHandler(ctx, left, 8, height, top); // left arrow
+								drawHandler(ctx, right, -8, height, top); // right arrow
+
+								// scrollbar
+								ctx.beginPath();
+								ctx.fillStyle = 'lightgrey';
+								ctx.rect(left + 15, bottom + 30, width - 30, 15);
+								ctx.fill();
+								ctx.closePath();
+
+								// scrollbar thumb
+								ctx.beginPath();
+								ctx.fillStyle = 'black';
+								ctx.rect(left, bottom + 30, 15, 15);
+								ctx.rect(right - 15, bottom + 30, 15, 15);
+								ctx.fill();
+								ctx.closePath();
+
+								// movable scrollbar thumb
+								let startingPoint =
+									left +
+									15 +
+									((width - 30) / data.datasets[0].data.length) *
+										chartRef.current.scales.x.min;
+								const barWidth =
+									((width - 30) / data.datasets[0].data.length) * (dataLength + 1);
+								const totalWidth = startingPoint + barWidth;
+								if (totalWidth > width) {
+									startingPoint = right - 15 - barWidth;
+								}
+
+								ctx.beginPath();
+								ctx.fillStyle = 'grey';
+								ctx.rect(startingPoint, bottom + 30, barWidth, 15);
+								ctx.fill();
+								ctx.closePath();
+							},
+							[bgRange, data.datasets, dataLength],
+						),
+					},
+					{
+						id: 'hoverMarkerBackground',
+						afterDatasetsDraw: (chart: any, args: any, plugins: any) => {
 							const {
 								ctx,
-								chartArea: {top, bottom, left, right, width, height},
+								chartArea: {top, bottom, _, right},
 							} = chart;
-							drawHandler(ctx, left, 1, 8, height, top); // left arrow
-							drawHandler(ctx, right, 1, -8, height, top); // right arrow
+							if (hoverMarkerRef.current === undefined) return;
+
+							ctx.save();
+							ctx.beginPath();
+							ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
+							ctx.fillStyle = 'rgba(0, 0, 0, .1)';
+							ctx.lineWidth = 2;
+							ctx.moveTo(hoverMarkerRef.current, top);
+							ctx.lineTo(hoverMarkerRef.current, bottom);
+							ctx.stroke();
+							ctx.lineTo(right, bottom);
+							ctx.lineTo(right, top);
+							ctx.closePath();
+						},
+						afterEvent: (chart: any, args: any, pluginOptions: any) => {
+							const xCoor = args.event.x;
+							if (args.inChartArea) {
+								hoverMarkerRef.current = xCoor;
+							} else {
+								hoverMarkerRef.current = undefined;
+							}
+							args.changed = true;
 						},
 					},
 				]}
@@ -201,7 +280,6 @@ const BarChart: React.FC<ChartProps> = ({
 							clonedOptions.scales.x.min = 0;
 							clonedOptions.scales.x.max = dataLength - 1;
 						}
-						setOptions(clonedOptions);
 						setBgRange({
 							min: clonedOptions.scales.x.min,
 							max: clonedOptions.scales.x.max,
@@ -222,12 +300,14 @@ const BarChart: React.FC<ChartProps> = ({
 								data.datasets[0].data.length - (dataLength - 1);
 							clonedOptions.scales.x.max = data.datasets[0].data.length;
 						}
-						setOptions(clonedOptions);
 						setBgRange({
 							min: clonedOptions.scales.x.min,
 							max: clonedOptions.scales.x.max,
 						});
 					}
+				}}
+				onWheel={(event: React.WheelEvent<HTMLCanvasElement>) => {
+					scrollWheelHandler(event, chartRef.current);
 				}}
 			/>
 		</div>
