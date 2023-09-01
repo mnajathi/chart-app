@@ -26,15 +26,19 @@ ChartJS.register(
 );
 
 type ChartProps = {
+	chartRef: any;
 	initialData: ChartData<'bar'>;
 	dataLength: number;
 	hoverMarkerRef: any;
+	lineChartRef: any;
 };
 
 const BarChart: React.FC<ChartProps> = ({
+	chartRef,
 	initialData,
 	dataLength,
 	hoverMarkerRef,
+	lineChartRef,
 }) => {
 	const {bgRange, setBgRange} = useAppStore();
 	const initialOptions: any = {
@@ -57,7 +61,6 @@ const BarChart: React.FC<ChartProps> = ({
 		maintainAspectRatio: false,
 	};
 
-	const chartRef = useRef<any>();
 	const [data] = useState(initialData);
 	const [options, setOptions] = useState(initialOptions);
 
@@ -139,6 +142,25 @@ const BarChart: React.FC<ChartProps> = ({
 		}
 	};
 
+	const scrollBarHandler = (width: number, x: number, left: number) => {
+		const clonedOptions: any = structuredClone(options);
+		const barWidth =
+			((width - 30) / data.datasets[0].data.length) * (dataLength + 1);
+		const totalWidth = x + barWidth;
+		if (totalWidth > width) {
+			clonedOptions.scales.x.min = data.datasets[0].data.length - (dataLength - 1);
+			clonedOptions.scales.x.max = data.datasets[0].data.length;
+		} else {
+			clonedOptions.scales.x.min =
+				((x - left - 15) / (width - 30)) * data.datasets[0].data.length;
+			clonedOptions.scales.x.max = clonedOptions.scales.x.min + dataLength - 1;
+		}
+		setBgRange({
+			min: clonedOptions.scales.x.min,
+			max: clonedOptions.scales.x.max,
+		});
+	};
+
 	return (
 		<div className="h-full">
 			<Bar
@@ -176,6 +198,11 @@ const BarChart: React.FC<ChartProps> = ({
 									canvas.style.cursor = 'pointer';
 								} else {
 									canvas.style.cursor = 'default';
+								}
+
+								// data should be show on dragging the scrollbar
+								if (y >= bottom + 30 && y <= bottom + 45) {
+									canvas.style.cursor = 'pointer';
 								}
 							});
 						},
@@ -228,8 +255,15 @@ const BarChart: React.FC<ChartProps> = ({
 							const {
 								ctx,
 								chartArea: {top, bottom, _, right},
-							} = chart;
+							} = lineChartRef.current;
 							if (hoverMarkerRef.current === undefined) return;
+
+							// hover marker should be shown only bgRange of lineChartRef
+							if (
+								hoverMarkerRef.current < lineChartRef.current.scales.x.min ||
+								hoverMarkerRef.current > lineChartRef.current.scales.x.max
+							)
+								return;
 
 							ctx.save();
 							ctx.beginPath();
@@ -302,9 +336,42 @@ const BarChart: React.FC<ChartProps> = ({
 							max: clonedOptions.scales.x.max,
 						});
 					}
+
+					// data should be show on dragging the scrollbar
+					if (y >= bottom + 30 && y <= bottom + 45) {
+						scrollBarHandler(width, x, left);
+					}
 				}}
 				onWheel={(event: React.WheelEvent<HTMLCanvasElement>) => {
 					scrollWheelHandler(event, chartRef.current);
+				}}
+				onMouseDown={(event: React.MouseEvent<HTMLCanvasElement>) => {
+					const {
+						ctx,
+						canvas,
+						chartArea: {top, bottom, left, right, width, height},
+					} = chartRef.current;
+					const rect = canvas.getBoundingClientRect();
+					const x = event.clientX - rect.left;
+					const y = event.clientY - rect.top;
+
+					if (y >= bottom + 30 && y <= bottom + 45) {
+						scrollBarHandler(width, x, left);
+					}
+				}}
+				onMouseUp={(event: React.MouseEvent<HTMLCanvasElement>) => {
+					const {
+						ctx,
+						canvas,
+						chartArea: {top, bottom, left, right, width, height},
+					} = chartRef.current;
+					const rect = canvas.getBoundingClientRect();
+					const x = event.clientX - rect.left;
+					const y = event.clientY - rect.top;
+
+					if (y >= bottom + 30 && y <= bottom + 45) {
+						scrollBarHandler(width, x, left);
+					}
 				}}
 			/>
 		</div>

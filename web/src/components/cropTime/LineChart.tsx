@@ -28,12 +28,14 @@ ChartJS.register(
 );
 
 type ChartProps = {
+	chartRef: any;
 	initialData: ChartData<'line'>;
 	hoverMarkerRef: any;
 	barChart: any;
 };
 
 const LineChart: React.FC<ChartProps> = ({
+	chartRef,
 	initialData,
 	hoverMarkerRef,
 	barChart,
@@ -65,7 +67,6 @@ const LineChart: React.FC<ChartProps> = ({
 		maintainAspectRatio: false,
 	};
 
-	const chartRef = useRef<any>();
 	const [data] = useState(initialData);
 	const [options, setOptions] = useState<any>(initialOptions);
 
@@ -89,26 +90,6 @@ const LineChart: React.FC<ChartProps> = ({
 				ref={chartRef}
 				data={data}
 				options={options}
-				onTouchMove={(e: any) => {
-					if (!barChart) return;
-					const {
-						ctx,
-						chartArea: {top, bottom, _, right},
-					} = barChart;
-					if (hoverMarkerRef.current === undefined) return;
-
-					ctx.save();
-					ctx.beginPath();
-					ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
-					ctx.fillStyle = 'rgba(0, 0, 0, .1)';
-					ctx.lineWidth = 2;
-					ctx.moveTo(hoverMarkerRef.current, top);
-					ctx.lineTo(hoverMarkerRef.current, bottom);
-					ctx.stroke();
-					ctx.lineTo(right, bottom);
-					ctx.lineTo(right, top);
-					ctx.closePath();
-				}}
 				plugins={[
 					{
 						id: 'backgroundColorRange',
@@ -129,37 +110,37 @@ const LineChart: React.FC<ChartProps> = ({
 							);
 						},
 					},
-					{
-						id: 'hoverMarkerBackground',
-						afterDatasetsDraw: (chart: any, args: any, plugins: any) => {
-							const {
-								ctx,
-								chartArea: {top, bottom, _, right},
-							} = chart;
-							if (hoverMarkerRef.current === undefined) return;
+					// {
+					// 	id: 'hoverMarkerBackground',
+					// 	afterDatasetsDraw: (chart: any, args: any, plugins: any) => {
+					// 		const {
+					// 			ctx,
+					// 			chartArea: {top, bottom, _, right},
+					// 		} = chart;
+					// 		if (hoverMarkerRef.current === undefined) return;
 
-							ctx.save();
-							ctx.beginPath();
-							ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
-							ctx.fillStyle = 'rgba(0, 0, 0, .1)';
-							ctx.lineWidth = 2;
-							ctx.moveTo(hoverMarkerRef.current, top);
-							ctx.lineTo(hoverMarkerRef.current, bottom);
-							ctx.stroke();
-							ctx.lineTo(right, bottom);
-							ctx.lineTo(right, top);
-							ctx.closePath();
-						},
-						afterEvent: (chart: any, args: any, pluginOptions: any) => {
-							const xCoor = args.event.x;
-							if (args.inChartArea) {
-								hoverMarkerRef.current = xCoor;
-							} else {
-								hoverMarkerRef.current = undefined;
-							}
-							args.changed = true;
-						},
-					},
+					// 		ctx.save();
+					// 		ctx.beginPath();
+					// 		ctx.strokeStyle = 'rgba(0, 0, 0, 1)';
+					// 		ctx.fillStyle = 'rgba(0, 0, 0, .1)';
+					// 		ctx.lineWidth = 2;
+					// 		ctx.moveTo(hoverMarkerRef.current, top);
+					// 		ctx.lineTo(hoverMarkerRef.current, bottom);
+					// 		ctx.stroke();
+					// 		ctx.lineTo(right, bottom);
+					// 		ctx.lineTo(right, top);
+					// 		ctx.closePath();
+					// 	},
+					// 	afterEvent: (chart: any, args: any, pluginOptions: any) => {
+					// 		const xCoor = args.event.x;
+					// 		if (args.inChartArea) {
+					// 			hoverMarkerRef.current = xCoor;
+					// 		} else {
+					// 			hoverMarkerRef.current = undefined;
+					// 		}
+					// 		args.changed = true;
+					// 	},
+					// },
 				]}
 				height={320}
 			/>

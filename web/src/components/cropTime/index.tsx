@@ -158,20 +158,24 @@ const Index: React.FC<IndexProps> = ({}) => {
 		],
 	};
 
-	const [barChart, setBarChart] = useState<any>(undefined);
+	const lineChart = useRef<any>();
+	const barChart = useRef<any>();
 	const hoverMarkerRef = useRef(undefined);
 
 	return (
 		<>
 			<LineChart
+				chartRef={lineChart}
 				initialData={initialData}
 				hoverMarkerRef={hoverMarkerRef}
 				barChart={barChart}
 			/>
 			<BarChart
+				chartRef={barChart}
 				initialData={initialData}
 				dataLength={DATA_LENGTH}
 				hoverMarkerRef={hoverMarkerRef}
+				lineChartRef={lineChart}
 			/>
 		</>
 	);
