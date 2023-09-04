@@ -168,7 +168,7 @@ const Index: React.FC<IndexProps> = ({}) => {
 				chartRef={lineChart}
 				initialData={initialData}
 				hoverMarkerRef={hoverMarkerRef}
-				barChart={barChart}
+				barChartRef={barChart}
 			/>
 			<BarChart
 				chartRef={barChart}

@@ -24,6 +24,7 @@
 		"axios": "^1.4.0",
 		"chart.js": "^4.3.3",
 		"chartjs-plugin-annotation": "^3.0.1",
+		"chartjs-plugin-crosshair": "^2.0.0",
 		"eslint-config-next": "13.4.13",
 		"moment": "^2.29.4",
 		"next": "13.4.13",

@@ -1,5 +1,6 @@
 'use client';
 
+import useAppStore from '@/store';
 import {
 	BarElement,
 	CategoryScale,
@@ -10,10 +11,9 @@ import {
 	Title,
 	Tooltip,
 } from 'chart.js';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {Bar} from 'react-chartjs-2';
 import annotationPlugin from 'chartjs-plugin-annotation';
-import useAppStore from '@/store';
+import React, {useEffect, useState} from 'react';
+import {Bar, getElementsAtEvent} from 'react-chartjs-2';
 
 ChartJS.register(
 	CategoryScale,
@@ -59,6 +59,13 @@ const BarChart: React.FC<ChartProps> = ({
 			},
 		},
 		maintainAspectRatio: false,
+		plugins: {
+			crosshair: {
+				sync: {
+					enabled: true,
+				},
+			},
+		},
 	};
 
 	const [data] = useState(initialData);
@@ -371,6 +378,32 @@ const BarChart: React.FC<ChartProps> = ({
 
 					if (y >= bottom + 30 && y <= bottom + 45) {
 						scrollBarHandler(width, x, left);
+					}
+				}}
+				onMouseMove={(event: React.MouseEvent<HTMLCanvasElement>) => {
+					if (!lineChartRef.current) return;
+					const points = getElementsAtEvent(lineChartRef.current, event);
+					if (points[0]) {
+						const dataset = points[0].datasetIndex;
+						const index = points[0].index;
+
+						chartRef.current.tooltip.setActiveElements([
+							{
+								datasetIndex: dataset,
+								index: index,
+							},
+						]);
+						chartRef.current.setActiveElements([
+							{
+								datasetIndex: dataset,
+								index: index,
+							},
+						]);
+						chartRef.current.update();
+					} else {
+						chartRef.current.tooltip.setActiveElements([], {x: 0, y: 0});
+						chartRef.current.setActiveElements([], {x: 0, y: 0});
+						chartRef.current.update();
 					}
 				}}
 			/>

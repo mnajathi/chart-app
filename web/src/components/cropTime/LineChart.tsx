@@ -13,7 +13,7 @@ import {
 	Tooltip,
 } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Line} from 'react-chartjs-2';
 
 ChartJS.register(
@@ -31,14 +31,14 @@ type ChartProps = {
 	chartRef: any;
 	initialData: ChartData<'line'>;
 	hoverMarkerRef: any;
-	barChart: any;
+	barChartRef: any;
 };
 
 const LineChart: React.FC<ChartProps> = ({
 	chartRef,
 	initialData,
 	hoverMarkerRef,
-	barChart,
+	barChartRef,
 }) => {
 	const {bgRange} = useAppStore();
 	const initialOptions: any = {
@@ -58,6 +58,11 @@ const LineChart: React.FC<ChartProps> = ({
 				display: true,
 				text: 'Performance throughout the day (Los Angeles)',
 			},
+			crosshair: {
+				sync: {
+					enabled: true,
+				},
+			},
 		},
 		scales: {
 			y: {
@@ -65,6 +70,7 @@ const LineChart: React.FC<ChartProps> = ({
 			},
 		},
 		maintainAspectRatio: false,
+		pointHoverRadius: 6,
 	};
 
 	const [data] = useState(initialData);
