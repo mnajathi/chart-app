@@ -380,6 +380,7 @@ const BarChart: React.FC<ChartProps> = ({
 						scrollBarHandler(width, x, left);
 					}
 				}}
+				// this tooltip update function is not working...
 				onMouseMove={(event: React.MouseEvent<HTMLCanvasElement>) => {
 					if (!lineChartRef.current) return;
 					const points = getElementsAtEvent(lineChartRef.current, event);
