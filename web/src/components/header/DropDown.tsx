@@ -51,7 +51,7 @@ const DropDown: React.FC<DropDownProps> = () => {
 			) : (
 				isProfileOpen &&
 				isFetched && (
-					<div className="absolute right-0 mt-1 bg-white rounded shadow w-64">
+					<div className="absolute right-0 mt-1 bg-white rounded shadow w-64 z-50">
 						<div className="flex flex-column items-center px-4 py-3">
 							<div className="pr-4">
 								{meData?.fullname && (
@@ -76,10 +76,18 @@ const DropDown: React.FC<DropDownProps> = () => {
 								Profile
 							</Link>
 							<Link
-								href="#"
+								href="/employee"
 								className="block px-4 py-2 text-sm text-blue-600 hover:bg-gray-100"
+								onClick={toggleProfileDropdown}
 							>
-								Settings
+								Employee Single
+							</Link>
+							<Link
+								href="/plotly"
+								className="block px-4 py-2 text-sm text-blue-600 hover:bg-gray-100"
+								onClick={toggleProfileDropdown}
+							>
+								Plotly.JS
 							</Link>
 							<Link
 								href="#"
