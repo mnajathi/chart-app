@@ -283,6 +283,7 @@ const BarChart: React.FC<ChartProps> = ({
 							ctx.lineTo(right, bottom);
 							ctx.lineTo(right, top);
 							ctx.closePath();
+							ctx.restore();
 						},
 						afterEvent: (chart: any, args: any, pluginOptions: any) => {
 							const xCoor = args.event.x;
