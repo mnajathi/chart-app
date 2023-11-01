@@ -40,8 +40,6 @@ const ContextMenuItem: React.FC<ContextMenuItemProps> = ({
 		};
 	}, [handleClickOutside]);
 
-	console.log(y, x);
-
 	return isVisible ? (
 		<div
 			ref={contextMenuRef}

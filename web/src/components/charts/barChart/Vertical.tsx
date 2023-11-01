@@ -156,6 +156,7 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 				data={data}
 				onContextMenu={(event: React.MouseEvent<HTMLCanvasElement>) => {
 					event.preventDefault();
+
 					const eventElement = getElementAtEvent(chartRef.current, event)[0];
 					const annotations = options.plugins.annotation.annotations;
 					const existingAnnotation = Object.keys(annotations).some(
@@ -168,24 +169,44 @@ const VerticalBarChart: React.FC<VerticalBarChartProps> = ({xAxis, yAxis}) => {
 					);
 
 					setItems(initialItems);
-					if (eventElement && !existingAnnotation && !isPto) {
-						setItems((prevItems) => [
-							{
-								id: 1,
-								title: 'Mark day as PTO',
-								onClick: () => onPtoAddHandler(eventElement.index, ANNOTATION_COLOR_1),
-							},
-							...prevItems,
-						]);
-					} else if (eventElement && existingAnnotation && !isPto) {
-						setItems((prevItems) => [
-							{
-								id: 1,
-								title: 'Remove PTO',
-								onClick: () => onRemovePtoHandler(eventElement.index),
-							},
-							...prevItems,
-						]);
+					if (eventElement) {
+						if (!existingAnnotation && !isPto) {
+							setItems((prevItems) => [
+								{
+									id: 1,
+									title: 'Mark day as PTO',
+									onClick: () => onPtoAddHandler(eventElement.index, ANNOTATION_COLOR_1),
+								},
+								...prevItems,
+							]);
+						} else if (existingAnnotation && !isPto) {
+							setItems((prevItems) => [
+								{
+									id: 1,
+									title: 'Remove PTO',
+									onClick: () => onRemovePtoHandler(eventElement.index),
+								},
+								...prevItems,
+							]);
+						}
+					} else {
+						const bars = chartRef.current.getElementsAtEventForMode(
+							event,
+							'nearest',
+							{intersect: false},
+							true,
+						);
+						const index = bars[0].index;
+						if (index) {
+							setItems((prevItems) => [
+								{
+									id: 1,
+									title: 'Remove PTO',
+									onClick: () => onRemovePtoHandler(index),
+								},
+								...prevItems,
+							]);
+						}
 					}
 
 					setContextMenuPos({
